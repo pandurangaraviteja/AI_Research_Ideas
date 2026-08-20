@@ -1,0 +1,1398 @@
+<!-- Artificial Intelligence — Course + Research Dashboard -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Artificial Intelligence — Course & Research Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root{
+    --bg:#080b12;
+    --bg2:#0d111b;
+    --panel:#121826;
+    --panel2:#19202f;
+    --line:#262f42;
+    --ink:#e9edf6;
+    --ink-soft:#97a1b6;
+    --ink-faint:#5e687e;
+    --blue:#4d7cff;
+    --lime:#c6f24e;
+    --magenta:#ff5db1;
+    --orange:#ff8a3d;
+    --nptel:#c6f24e;
+    --mit:#ff8a3d;
+    --stanford:#4d7cff;
+    --yt:#ff5db1;
+    --radius:14px;
+    --shadow:0 22px 50px -24px rgba(0,0,0,.8);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:
+      radial-gradient(1000px 600px at 90% -15%, rgba(77,124,255,.13), transparent 60%),
+      radial-gradient(800px 500px at -5% 5%, rgba(198,242,78,.07), transparent 55%),
+      radial-gradient(700px 500px at 50% 120%, rgba(255,93,177,.08), transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Archivo',system-ui,sans-serif;line-height:1.55;
+    -webkit-font-smoothing:antialiased;padding-bottom:80px;
+  }
+
+  header{position:sticky;top:0;z-index:60;backdrop-filter:blur(16px);
+    background:linear-gradient(180deg,rgba(8,11,18,.95),rgba(8,11,18,.78));border-bottom:1px solid var(--line)}
+  .head-inner{max-width:1220px;margin:0 auto;padding:18px 22px 14px}
+  .brand{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--lime);border:1px solid var(--lime);border-radius:50px;padding:4px 11px}
+  .tagm{color:var(--ink-faint);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em}
+  h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(23px,3.6vw,36px);letter-spacing:-.5px;line-height:1.02;margin-top:9px}
+  h1 em{font-style:normal;background:linear-gradient(90deg,var(--blue),var(--magenta));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .sub{color:var(--ink-soft);font-size:14px;margin-top:5px;max-width:760px}
+
+  .viewtabs{display:flex;gap:8px;margin-top:16px}
+  .vtab{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;letter-spacing:.01em;
+    background:var(--panel);border:1px solid var(--line);color:var(--ink-soft);
+    padding:10px 18px;border-radius:11px;cursor:pointer;transition:.18s;display:flex;align-items:center;gap:8px}
+  .vtab:hover{color:var(--ink);border-color:var(--ink-faint)}
+  .vtab.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+  .controls{display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap}
+  .search{flex:1;min-width:200px;display:flex;align-items:center;gap:9px;background:var(--panel);
+    border:1px solid var(--line);border-radius:10px;padding:9px 13px}
+  .search input{background:none;border:none;color:var(--ink);font-family:inherit;font-size:14px;width:100%}
+  .search input:focus{outline:none}
+  .search svg{flex:none;opacity:.55}
+  .filters{display:flex;gap:7px;flex-wrap:wrap}
+  .chip{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--panel);border:1px solid var(--line);
+    color:var(--ink-soft);padding:8px 13px;border-radius:9px;cursor:pointer;transition:.18s}
+  .chip:hover{border-color:var(--ink-faint);color:var(--ink)}
+  .chip.active{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:700}
+
+  .progress-wrap{display:flex;align-items:center;gap:12px;margin-top:14px}
+  .bar{flex:1;height:9px;background:var(--panel2);border-radius:50px;overflow:hidden;border:1px solid var(--line)}
+  .bar span{display:block;height:100%;width:0;border-radius:50px;background:linear-gradient(90deg,var(--lime),var(--blue),var(--magenta));transition:width .4s}
+  .pct{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink-soft);white-space:nowrap}
+  .pct b{color:var(--ink)}
+
+  main{max-width:1220px;margin:0 auto;padding:30px 22px 0}
+  .view{display:none}
+  .view.on{display:block}
+
+  /* hubs */
+  .hubs{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-bottom:38px}
+  .hub{background:linear-gradient(160deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:14px;
+    padding:17px;text-decoration:none;color:var(--ink);transition:.18s;position:relative;overflow:hidden}
+  .hub::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--hc)}
+  .hub:hover{border-color:var(--hc);transform:translateY(-3px);box-shadow:var(--shadow)}
+  .hub .src{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;color:var(--hc);text-transform:uppercase}
+  .hub .ht{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;margin:6px 0 4px;line-height:1.15}
+  .hub .hd{color:var(--ink-soft);font-size:12.5px;line-height:1.4}
+  .hub .arr{position:absolute;top:14px;right:14px;opacity:.4}
+
+  .unit{margin-bottom:46px;scroll-margin-top:200px}
+  .unit-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+  .unit-num{font-family:'Syne',sans-serif;font-weight:800;font-size:30px;color:var(--bg);background:var(--u-c);
+    border-radius:12px;width:58px;height:58px;display:grid;place-items:center;flex:none;box-shadow:0 12px 28px -12px var(--u-c)}
+  .unit-meta h2{font-family:'Syne',sans-serif;font-weight:700;font-size:clamp(19px,2.5vw,25px);letter-spacing:-.3px}
+  .unit-meta p{color:var(--ink-soft);font-size:13.5px;margin-top:2px}
+  .unit-meta .count{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--u-c);letter-spacing:.06em;margin-top:6px;display:inline-block}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+  .card{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px 18px 16px;position:relative;overflow:hidden;transition:.2s;display:flex;flex-direction:column}
+  .card::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:var(--u-c);opacity:.85}
+  .card:hover{border-color:var(--u-c);transform:translateY(-2px);box-shadow:var(--shadow)}
+  .card.done{opacity:.55}
+  .card.done .topic{text-decoration:line-through;text-decoration-color:var(--ink-faint)}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}
+  .code{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--u-c);letter-spacing:.08em;opacity:.85;display:block;margin-bottom:5px}
+  .topic{font-family:'Syne',sans-serif;font-weight:700;font-size:16.5px;letter-spacing:-.2px;line-height:1.2}
+  .check{flex:none;width:24px;height:24px;border-radius:7px;border:1.5px solid var(--line);background:var(--panel2);
+    cursor:pointer;display:grid;place-items:center;transition:.15s}
+  .check:hover{border-color:var(--u-c)}
+  .check svg{width:13px;height:13px;opacity:0;transform:scale(.5);transition:.15s}
+  .card.done .check{background:var(--u-c);border-color:var(--u-c)}
+  .card.done .check svg{opacity:1;transform:scale(1)}
+  .subs{list-style:none;margin:3px 0 14px;display:flex;flex-wrap:wrap;gap:6px}
+  .subs li{font-size:11px;color:var(--ink-soft);background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:3px 8px;font-family:'JetBrains Mono',monospace}
+  .res{margin-top:auto;display:flex;flex-direction:column;gap:7px}
+  .res a{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--ink);background:var(--panel2);
+    border:1px solid var(--line);border-radius:9px;padding:8px 11px;font-size:13px;transition:.15s}
+  .res a:hover{border-color:var(--u-c);background:#1d2434;transform:translateX(2px)}
+  .pill{flex:none;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.05em;
+    padding:3px 6px;border-radius:5px;color:#080b12;text-transform:uppercase}
+  .pill.nptel{background:var(--nptel)} .pill.mit{background:var(--mit)} .pill.stanford{background:var(--stanford)} .pill.yt{background:var(--yt)}
+  .res .label{flex:1;line-height:1.25}
+  .res .label small{display:block;color:var(--ink-faint);font-size:10px;font-family:'JetBrains Mono',monospace;margin-top:1px}
+  .res .arr{opacity:.4;font-size:12px}
+
+  /* research */
+  .lab-intro{background:linear-gradient(135deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin-bottom:26px}
+  .lab-intro h3{font-family:'Syne',sans-serif;font-weight:700;font-size:19px;margin-bottom:6px}
+  .lab-intro p{color:var(--ink-soft);font-size:13.5px;max-width:880px}
+  .lab-intro .note{margin-top:10px;font-size:12px;color:var(--ink-faint);border-left:2px solid var(--orange);padding-left:11px}
+  .rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(370px,1fr));gap:15px}
+  .ridea{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:14px;padding:18px;position:relative;transition:.18s}
+  .ridea:hover{border-color:var(--rc);transform:translateY(-2px);box-shadow:var(--shadow)}
+  .ridea .rnum{font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:var(--bg);background:var(--rc);
+    width:30px;height:30px;border-radius:8px;display:grid;place-items:center;position:absolute;top:16px;right:16px}
+  .ridea .rarea{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--rc);text-transform:uppercase}
+  .ridea .rtitle{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;line-height:1.2;margin:6px 50px 9px 0}
+  .ridea .ridea-body{font-size:13px;color:var(--ink-soft);line-height:1.5}
+  .ridea .rwhy{margin-top:10px;font-size:12px;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 11px}
+  .ridea .rwhy b{color:var(--lime);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em}
+
+  .rfilters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:20px}
+
+  .section-title{display:flex;align-items:center;gap:12px;margin:6px 0 18px}
+  .section-title h2{font-family:'Syne',sans-serif;font-weight:700;font-size:22px;letter-spacing:-.3px}
+  .section-title .line{flex:1;height:1px;background:var(--line)}
+  .section-title .dot{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--lime);letter-spacing:.18em}
+
+  footer{max-width:1220px;margin:30px auto 0;padding:22px;border-top:1px solid var(--line);
+    color:var(--ink-faint);font-size:12px;font-family:'JetBrains Mono',monospace;text-align:center;letter-spacing:.03em}
+  .empty{text-align:center;color:var(--ink-faint);padding:50px 0;font-family:'JetBrains Mono',monospace;font-size:13px;display:none}
+  @media(max-width:560px){.grid,.rgrid{grid-template-columns:1fr}.unit-num{width:48px;height:48px;font-size:24px}}
+
+  .ridea{cursor:pointer}
+  .planbtn{margin-top:12px;width:100%;font-family:'Syne',sans-serif;font-weight:700;font-size:12.5px;
+    background:transparent;border:1px solid var(--rc);color:var(--rc);padding:8px;border-radius:8px;cursor:pointer;transition:.15s}
+  .ridea:hover .planbtn{background:var(--rc);color:var(--bg)}
+
+  .overlay{position:fixed;inset:0;z-index:200;background:rgba(4,6,11,.78);backdrop-filter:blur(6px);
+    display:none;align-items:flex-start;justify-content:center;padding:40px 18px;overflow-y:auto}
+  .overlay.on{display:flex}
+  .modal{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);
+    border-radius:18px;max-width:820px;width:100%;padding:0;position:relative;box-shadow:var(--shadow);margin:auto}
+  .modal-head{position:sticky;top:0;background:linear-gradient(180deg,var(--panel),rgba(18,24,38,.96));
+    border-bottom:1px solid var(--line);border-radius:18px 18px 0 0;padding:20px 26px;z-index:2}
+  .modal-head .marea{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--mc);text-transform:uppercase}
+  .modal-head h3{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;line-height:1.15;margin-top:6px;padding-right:40px}
+  .closeb{position:absolute;top:18px;right:20px;width:34px;height:34px;border-radius:9px;border:1px solid var(--line);
+    background:var(--panel2);color:var(--ink);font-size:18px;cursor:pointer;line-height:1;transition:.15s}
+  .closeb:hover{border-color:var(--magenta);color:var(--magenta)}
+  .modal-body{padding:8px 26px 30px}
+  .plan-sec{padding:18px 0;border-bottom:1px solid var(--line)}
+  .plan-sec:last-child{border-bottom:none}
+  .plan-sec h4{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--ink);margin-bottom:9px;display:flex;align-items:center;gap:9px}
+  .plan-sec h4 .ix{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--mc);background:var(--panel2);border:1px solid var(--line);border-radius:6px;width:24px;height:24px;display:grid;place-items:center;flex:none}
+  .plan-sec p{font-size:13.5px;color:var(--ink-soft);line-height:1.6;margin-bottom:8px}
+  .plan-sec p b{color:var(--ink)}
+  .plan-sec ol,.plan-sec ul{margin:4px 0 4px 4px;padding-left:18px}
+  .plan-sec li{font-size:13.5px;color:var(--ink-soft);line-height:1.55;margin-bottom:5px}
+  .plan-sec li b{color:var(--ink)}
+  .eqn{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--mc);border-radius:8px;
+    padding:11px 14px;margin:10px 0;overflow-x:auto;font-size:14px}
+  .eqn .ex{display:block;margin-top:6px;font-size:12px;color:var(--ink-faint);font-family:'Archivo',sans-serif}
+  .reqgrid{display:grid;grid-template-columns:1fr;gap:10px}
+  .reqbox{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:12px 14px}
+  .reqbox .rl{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:var(--mc);text-transform:uppercase;margin-bottom:6px}
+  .reqbox span{font-size:12.5px;color:var(--ink-soft)}
+  .phase{display:flex;gap:12px;margin-bottom:11px}
+  .phase .pw{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--bg);background:var(--mc);border-radius:6px;
+    padding:3px 8px;height:fit-content;white-space:nowrap;font-weight:700}
+  .phase .pt{font-size:13px;color:var(--ink-soft);line-height:1.5}
+  .phase .pt b{color:var(--ink)}
+  .katex{font-size:1.02em}
+
+  .apply{background:linear-gradient(135deg,rgba(198,242,78,.07),rgba(77,124,255,.06));
+    border:1px solid var(--line);border-left:3px solid var(--mc);border-radius:11px;padding:16px 18px;margin:16px 0 4px}
+  .apply .alab{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;color:var(--mc);margin-bottom:8px}
+  .apply h5{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--ink);line-height:1.3;margin-bottom:11px}
+  .apply .ds{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:11px}
+  .apply .dschip{display:inline-flex;align-items:center;gap:5px;background:var(--panel2);border:1px solid var(--line);
+    border-radius:8px;padding:6px 11px;font-size:12px;color:var(--ink);text-decoration:none;transition:.15s;font-family:'JetBrains Mono',monospace}
+  .apply .dschip:hover{border-color:var(--mc);color:var(--mc);transform:translateY(-1px)}
+  .apply .fit{font-size:13px;color:var(--ink-soft);line-height:1.55}
+  .apply .fit b{color:var(--ink)}
+
+  .promptwrap p{font-size:13px;color:var(--ink-soft);line-height:1.55;margin-bottom:10px}
+  .promptbox{position:relative;background:#0b0f17;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+  .promptbox pre{margin:0;padding:16px 16px 16px;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.65;
+    color:var(--ink-soft);white-space:pre-wrap;word-break:break-word;max-height:340px;overflow-y:auto}
+  .copybtn{position:absolute;top:10px;right:10px;z-index:2;font-family:'Syne',sans-serif;font-weight:700;font-size:12px;
+    background:var(--mc);color:var(--bg);border:none;border-radius:8px;padding:7px 14px;cursor:pointer;transition:.15s;box-shadow:0 4px 12px -4px var(--mc)}
+  .copybtn:hover{filter:brightness(1.08)}
+  .promptwrap h4 .ix{color:var(--mc)}
+</style>
+
+<header>
+  <div class="head-inner">
+    <div class="brand">
+      <span class="tag">Graduate AI</span>
+      <span class="tagm">3 UNITS · 25 TOPICS · 25 RESEARCH DIRECTIONS</span>
+    </div>
+    <h1>Artificial Intelligence — <em>Search, Reasoning &amp; Learning</em></h1>
+    <p class="sub">Full syllabus mapped to NPTEL, MIT OpenCourseWare &amp; Stanford lectures — plus a research lab of 25 scoped project directions.</p>
+
+    <div class="viewtabs">
+      <button class="vtab active" data-view="curriculum">◫ Curriculum</button>
+      <button class="vtab" data-view="research">⚗ Research Lab</button>
+    </div>
+
+    <div id="curr-controls">
+      <div class="controls">
+        <label class="search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+          <input id="q" type="text" placeholder="Search topics — e.g. A*, Gibbs sampling, Kalman, EM…">
+        </label>
+        <div class="filters">
+          <button class="chip active" data-f="all">All</button>
+          <button class="chip" data-f="u1">Unit 1</button>
+          <button class="chip" data-f="u2">Unit 2</button>
+          <button class="chip" data-f="u3">Unit 3</button>
+          <button class="chip" data-f="todo">Unfinished</button>
+        </div>
+      </div>
+      <div class="progress-wrap">
+        <div class="bar"><span id="barFill"></span></div>
+        <div class="pct"><b id="pctNum">0</b>% · <span id="pctCount">0/25</span> done</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- CURRICULUM VIEW -->
+  <section class="view on" id="view-curriculum">
+    <div class="section-title"><span class="dot">// FULL COURSES</span><h2>Resource hubs — watch end-to-end</h2><span class="line"></span></div>
+    <div class="hubs" id="hubs"></div>
+    <div id="units"></div>
+    <p class="empty" id="empty">// no topics match your search</p>
+  </section>
+
+  <!-- RESEARCH VIEW -->
+  <section class="view" id="view-research">
+    <div class="lab-intro">
+      <h3>25 research directions</h3>
+      <p>Each is scoped to be <b>tractable and defensible</b>: a clear gap, a concrete method, a measurable baseline, and known ground truth or a published guarantee to lean on. They're grouped by the three units so you can pair a project with what you're currently studying.</p>
+      <p class="note">Reality check: no idea is automatically "novel" or "bulletproof" — before committing, run a literature scan (Google Scholar, arXiv, Semantic Scholar) on the title keywords to confirm the gap is still open, and scope the experiment to compute you actually have. Defensibility here comes from clean baselines and reproducibility, not from a guarantee of a positive result.</p>
+    </div>
+    <div class="rfilters" id="rfilters">
+      <button class="chip active" data-rf="all">All 25</button>
+      <button class="chip" data-rf="search">Search &amp; Optimization</button>
+      <button class="chip" data-rf="reason">Reasoning &amp; Uncertainty</button>
+      <button class="chip" data-rf="learn">Temporal · Planning · Learning</button>
+    </div>
+    <div class="rgrid" id="research"></div>
+
+    <!-- MODAL -->
+    <div class="overlay" id="overlay" onclick="if(event.target===this)closePlan()">
+      <div class="modal" id="modal" style="--mc:var(--lime)">
+        <div class="modal-head">
+          <button class="closeb" onclick="closePlan()">×</button>
+          <div class="marea" id="m-area"></div>
+          <h3 id="m-title"></h3>
+        </div>
+        <div class="modal-body" id="m-body"></div>
+      </div>
+    </div>
+
+    <!-- HIDDEN PLAN SOURCES (rendered once, copied into modal on open) -->
+    <div id="plans" style="display:none">
+
+      <div class="plan" id="plan-1">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>Hand-designed heuristics for $A^*$ (Manhattan distance, pattern databases) are admissible but often loose, so $A^*$ expands far more nodes than necessary. Learned heuristics are tighter but lose the admissibility guarantee, so optimality is no longer certified. The open question: can a learned heuristic stay <b>provably admissible</b> while being tighter than the hand-designed base?</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>$A^*$ orders the frontier by $f(n)=g(n)+h(n)$ and returns an optimal path whenever $h$ is admissible, i.e. $h(n)\le h^*(n)$ for all $n$, where $h^*$ is the true cost-to-go.</p>
+          <div class="eqn">$$ h_{\max}(n)=\max_i h_i(n) \quad\text{is admissible if every } h_i \text{ is.}$$<span class="ex">The pointwise max of admissible heuristics is admissible and dominates each — this is the safety anchor.</span></div>
+          <p>Train a GNN $\hat h_\theta(n)$ with an <b>asymmetric loss</b> that punishes overestimation heavily ($\rho\gg1$):</p>
+          <div class="eqn">$$ \mathcal{L}(\theta)=\mathbb{E}\!\left[\rho\,\big(\max(0,\hat h_\theta-h^*)\big)^2+\big(\max(0,h^*-\hat h_\theta)\big)^2\right] $$</div>
+          <p>At inference, clamp to guarantee admissibility regardless of network error: $h(n)=\min\!\big(\hat h_\theta(n),\,h_{\max}(n)\big)$ is $\le h_{\max}\le h^*$, hence admissible — yet tighter than $h_{\max}$ wherever the network is confident.</p>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Pick a domain with computable $h^*$ on small instances (15-puzzle, grid pathfinding).</li>
+          <li>Generate training pairs $(n,h^*(n))$ by reverse BFS from goals.</li>
+          <li>Encode states as graphs; train $\hat h_\theta$ with the asymmetric loss.</li>
+          <li>Wrap with the min-clamp; run $A^*$ and log node expansions.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–2</span><span class="pt"><b>Baselines.</b> Implement $A^*$ + Manhattan / PDB; record expansions on a benchmark set.</span></div>
+          <div class="phase"><span class="pw">WK 3–5</span><span class="pt"><b>Train.</b> Build the GNN, generate labels, tune $\rho$.</span></div>
+          <div class="phase"><span class="pw">WK 6–7</span><span class="pt"><b>Integrate + verify admissibility</b> empirically (no expanded node has $h>h^*$).</span></div>
+          <div class="phase"><span class="pw">WK 8</span><span class="pt"><b>Analyze + write up</b> expansion reduction with confidence intervals.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>$A^*$, admissibility/consistency, basic GNNs (message passing).</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>Python, PyTorch + PyTorch Geometric, NetworkX.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>Self-generated puzzle/grid instances with reverse-BFS labels.</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p><b>Baselines:</b> Manhattan, pattern DB, raw (unclamped) learned heuristic. <b>Metrics:</b> mean node expansions, time-to-solution, % optimal solutions (must be 100%), admissibility violations (must be 0).</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>A heuristic that is <b>certified optimal</b> (by construction) and empirically reduces expansions versus the admissible baseline. The claim is safe even if the network is mediocre, because the clamp protects optimality.</p></div>
+      </div>
+
+      <div class="plan" id="plan-2">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>Simulated annealing's performance is dominated by its cooling schedule and restart policy, which are usually fixed by trial-and-error. A schedule good for one instance is bad for another. Can an agent <b>adapt the schedule online</b>, per instance, with no prior tuning?</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>SA accepts a worse move of energy gap $\Delta E>0$ with probability</p>
+          <div class="eqn">$$ P(\text{accept})=\exp\!\left(-\frac{\Delta E}{T}\right),\qquad T_{k+1}=\alpha\,T_k,\ \ 0<\alpha<1. $$</div>
+          <p>Treat each candidate schedule (a choice of $\alpha$, reheating threshold, restart trigger) as an arm of a multi-armed bandit. Select arms by UCB1:</p>
+          <div class="eqn">$$ a_t=\arg\max_a\ \hat\mu_a+\sqrt{\tfrac{2\ln t}{N_a}} $$<span class="ex">$\hat\mu_a$ = average reward (negative best-cost-so-far) of arm $a$; $N_a$ = times pulled.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Define an arm set spanning cooling rates and restart rules.</li>
+          <li>Run SA in epochs; each epoch the bandit picks an arm and SA runs under it.</li>
+          <li>Reward = improvement in best objective; update UCB statistics.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–2</span><span class="pt"><b>Vanilla SA</b> on TSP + MAX-SAT; tune a fixed geometric baseline.</span></div>
+          <div class="phase"><span class="pw">WK 3–4</span><span class="pt"><b>Add the bandit</b> controller; define arms and reward.</span></div>
+          <div class="phase"><span class="pw">WK 5–6</span><span class="pt"><b>Benchmark</b> at fixed evaluation budgets, many seeds.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>Metropolis criterion, multi-armed bandits / UCB.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>Python; TSPLIB, SATLIB instances.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>Standard TSP / MAX-SAT benchmark suites.</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p><b>Baselines:</b> best fixed geometric schedule, random schedule. <b>Metrics:</b> final objective at fixed budget, anytime curves, win-rate across instances (Wilcoxon signed-rank test).</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>A tuning-free SA that matches or beats a hand-tuned schedule. Even parity is a positive result (removes manual tuning).</p></div>
+      </div>
+
+      <div class="plan" id="plan-3">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>Memetic algorithms (GA + local search) work well but the choice of which operator to apply when is fixed. A learned policy could adapt operator use to the search state.</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>GA evolves a population to maximize fitness $\mathcal{F}$. Model operator choice as an MDP: state $s$ = population statistics (best/mean fitness, diversity $D=\frac{1}{|P|^2}\sum_{i,j}d(x_i,x_j)$), action $a$ = operator, reward $r$ = fitness gain. Learn $Q(s,a)$ by</p>
+          <div class="eqn">$$ Q(s,a)\leftarrow Q(s,a)+\eta\big[r+\gamma\max_{a'}Q(s',a')-Q(s,a)\big]. $$</div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Define operator pool (uniform/2-point crossover, mutation rates, a local-search step).</li>
+          <li>Each generation: featurize state, choose operator via $\epsilon$-greedy $Q$, apply, observe reward.</li>
+          <li>Train across many instances so the policy generalizes.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–2</span><span class="pt"><b>Fixed memetic GA</b> baseline on a chosen combinatorial problem.</span></div>
+          <div class="phase"><span class="pw">WK 3–5</span><span class="pt"><b>Add tabular/linear $Q$</b> operator selector; define state features.</span></div>
+          <div class="phase"><span class="pw">WK 6–7</span><span class="pt"><b>Ablate</b> vs random and fixed operator schedules.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>Genetic algorithms, Q-learning, MDP basics.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>Python (DEAP), NumPy.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>Knapsack / TSP instance generators.</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p><b>Baselines:</b> fixed operator schedule, uniform-random operator. <b>Metrics:</b> best fitness at equal evaluation budget; convergence speed; operator-usage analysis.</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>Evidence that learned operator scheduling improves sample efficiency, with an interpretable account of which operators the policy favors and when.</p></div>
+      </div>
+
+      <div class="plan" id="plan-4">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>$A^*$ is optimal but memory-hungry ($O(b^d)$ stored nodes); iterative-deepening $A^*$ (IDA*) uses linear memory but re-expands nodes. Where exactly does one beat the other under realistic memory caps? The literature lacks a clean cross-domain map.</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>For branching factor $b$ and depth $d$, $A^*$ stores $\Theta(b^d)$ nodes; IDA* performs iterated bounded DFS whose total expansions are</p>
+          <div class="eqn">$$ N_{\text{IDA}^*}=\sum_{k=0}^{d} (b^{k})\ \approx\ \frac{b^{d+1}}{b-1}\quad(\text{re-expansion overhead } \tfrac{b}{b-1}). $$</div>
+          <p>Define the <b>crossover memory cap</b> $M^*$ as the cap below which IDA*'s extra time is worth the memory saved. The study estimates $M^*$ as a function of $(b,d,\text{heuristic error})$ empirically.</p>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Instrument both solvers to log peak memory + expansions.</li>
+          <li>Sweep problem families (puzzles, grids, planning) and memory caps.</li>
+          <li>Fit the boundary surface $M^*(b,d,\epsilon)$.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–3</span><span class="pt"><b>Build harness</b> + both solvers with telemetry.</span></div>
+          <div class="phase"><span class="pw">WK 4–6</span><span class="pt"><b>Run sweeps</b> across domains and caps.</span></div>
+          <div class="phase"><span class="pw">WK 7–8</span><span class="pt"><b>Fit + visualize</b> the frontier; report with CIs.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>$A^*$, IDA*, asymptotic analysis.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>Python/C++, memory profiler, plotting (matplotlib).</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>Generated instances across several domains.</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p>Purely descriptive: the deliverable is the frontier map itself plus a predictive rule "given $(b,d,\epsilon,M)$, use solver X."</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>A reproducible empirical characterization that turns an informal rule-of-thumb into a measured boundary — defensible because it reports what is, not what beats SOTA.</p></div>
+      </div>
+
+      <div class="plan" id="plan-5">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>No single solver wins on all NP-hard instances. Per-instance <b>algorithm selection</b> (à la SATzilla) routes each instance to its best solver — but it's underexplored outside SAT. Port it to a new domain.</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>For instance $x$ with cheap features $\phi(x)$, learn per-solver runtime predictors $\hat t_s(x)=f_s(\phi(x))$ and select</p>
+          <div class="eqn">$$ s^\star(x)=\arg\min_{s}\ \hat t_s\big(\phi(x)\big). $$</div>
+          <p>Quality is measured against the oracle (always-best) selector via regret</p>
+          <div class="eqn">$$ R=\sum_x \Big(t_{s^\star(x)}(x)-\min_s t_s(x)\Big). $$</div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Collect a solver portfolio + cheap instance features.</li>
+          <li>Run all solvers on a training set to get runtimes (with timeouts/PAR10).</li>
+          <li>Train regressors/classifier; route at test time.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–3</span><span class="pt"><b>Assemble portfolio</b> + feature extractor; gather runtime data.</span></div>
+          <div class="phase"><span class="pw">WK 4–5</span><span class="pt"><b>Train selector</b>; tune timeout penalty.</span></div>
+          <div class="phase"><span class="pw">WK 6–7</span><span class="pt"><b>Evaluate</b> vs single-best and oracle.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>Supervised regression, algorithm selection paradigm.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>scikit-learn; chosen solvers as black boxes.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>Instance set for the target domain (e.g. CSP, MIP, TSP).</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p><b>Baselines:</b> single-best solver, random selection. <b>Metrics:</b> PAR10 runtime, % instances solved, gap to oracle.</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>A portfolio that beats any individual solver on aggregate runtime — measurable, hard to get a null result if solvers are genuinely complementary.</p></div>
+      </div>
+
+      <div class="plan" id="plan-6">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>Everyone "knows" a better heuristic means fewer expansions, but the precise empirical relationship between heuristic error and $A^*$ work is rarely measured cleanly. Pohl's analysis predicts exponential sensitivity — test it.</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>Define per-node error $\epsilon(n)=h^*(n)-h(n)\ge0$. A classic result: if relative error $\frac{h^*-h}{h^*}$ is bounded by a constant, expansions grow exponentially in solution depth; if absolute error is $O(\log h^*)$, $A^*$ runs in near-linear nodes. Empirically fit</p>
+          <div class="eqn">$$ \log N \approx \beta_0 + \beta_1\,\bar\epsilon + \beta_2\,d $$<span class="ex">$N$ = expansions, $\bar\epsilon$ = mean error, $d$ = depth; estimate $\beta$ with CIs.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Compute $h^*$ exactly on small instances; synthesize heuristics with controlled error by $h=h^*-\epsilon$.</li>
+          <li>Run $A^*$; log expansions vs error and depth.</li>
+          <li>Regress and report.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–2</span><span class="pt"><b>Exact $h^*$</b> via retrograde analysis on a small domain.</span></div>
+          <div class="phase"><span class="pw">WK 3–4</span><span class="pt"><b>Inject controlled error</b>; sweep $\epsilon$.</span></div>
+          <div class="phase"><span class="pw">WK 5–6</span><span class="pt"><b>Fit + report</b> the empirical law.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>$A^*$ theory, regression, Pohl's heuristic-error results.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>Python, statsmodels.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>Small solvable domains (8-puzzle, small grids).</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p>Goodness-of-fit ($R^2$), residual analysis, comparison to theoretical exponential prediction.</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>A measured curve relating heuristic quality to search effort — robust regardless of the curve's exact shape, since ground truth is computable.</p></div>
+      </div>
+
+      <div class="plan" id="plan-7">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>Weighted $A^*$ trades optimality for speed via a fixed weight $w$, but the right $w$ depends on the time budget you actually have. Adapt $w$ online to a deadline.</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>Weighted $A^*$ uses $f(n)=g(n)+w\,h(n)$ with $w\ge1$. With an admissible $h$, the returned solution cost is bounded:</p>
+          <div class="eqn">$$ C \le w\cdot C^\star . $$<span class="ex">Higher $w$ ⇒ faster but looser; the bound is guaranteed, not heuristic.</span></div>
+          <p>Schedule $w(t)$ to decrease as remaining time shrinks, optimizing the anytime quality profile $q(t)=C^\star / C(t)$.</p>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Implement Anytime Weighted $A^*$ (improves solution while time remains).</li>
+          <li>Add a controller that lowers $w$ based on elapsed/remaining time and current incumbent.</li>
+          <li>Compare quality-vs-time curves to fixed-$w$ runs.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–2</span><span class="pt"><b>Anytime WA*</b> baseline at several fixed $w$.</span></div>
+          <div class="phase"><span class="pw">WK 3–4</span><span class="pt"><b>Add adaptive $w(t)$</b> controller.</span></div>
+          <div class="phase"><span class="pw">WK 5–6</span><span class="pt"><b>Benchmark</b> anytime profiles under deadlines.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>Weighted/anytime $A^*$, bounded-suboptimality theory.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>Python/C++.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>Pathfinding maps (e.g. game grid benchmarks).</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p><b>Baselines:</b> fixed-$w$ WA*. <b>Metrics:</b> solution quality at deadlines, area under the quality-time curve.</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>Better quality-per-deadline than any single fixed weight — a full curve makes a null result unlikely.</p></div>
+      </div>
+
+      <div class="plan" id="plan-8">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>Hill climbing, simulated annealing, tabu search and basin-hopping all "escape local optima," but fair head-to-head comparisons with statistics are scattered. Build one rigorous harness.</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>A local optimum $x$ satisfies $\mathcal{F}(x)\ge \mathcal{F}(x')\ \forall x'\in\mathcal{N}(x)$. Define <b>success</b> as reaching within $\delta$ of the known global optimum. Compare methods with the paired Wilcoxon signed-rank statistic on per-instance objective gaps:</p>
+          <div class="eqn">$$ W=\sum_{i} \operatorname{sgn}(d_i)\,R_i,\quad d_i=\text{gap}_A^{(i)}-\text{gap}_B^{(i)} $$</div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Implement all methods behind one interface (same neighborhood, same budget).</li>
+          <li>Run many seeds on benchmark functions with known optima.</li>
+          <li>Apply non-parametric significance tests + effect sizes.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–3</span><span class="pt"><b>Unified harness</b> + 4 methods.</span></div>
+          <div class="phase"><span class="pw">WK 4–5</span><span class="pt"><b>Run</b> on standard test functions / combinatorial sets.</span></div>
+          <div class="phase"><span class="pw">WK 6–7</span><span class="pt"><b>Statistics + report.</b></span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>Local search methods, non-parametric statistics.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>Python, SciPy.stats.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>BBOB / CEC benchmark functions; combinatorial instances.</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p>Win/loss/tie matrix with p-values, success rate within $\delta$, budget-normalized comparisons.</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>A clean, reproducible comparison study — publishable on methodology and rigor, with near-zero risk of "no result."</p></div>
+      </div>
+
+      <div class="plan" id="plan-9">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>Fuzzy controllers are interpretable but give uncalibrated confidence. Bayesian networks give calibrated probabilities. Can we compile a fuzzy rule base into a BN and gain calibration without losing interpretability?</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>A fuzzy rule uses membership $\mu_A(x)\in[0,1]$ and Mamdani inference (min–max). Map fuzzy sets to discretized variables and translate rule firing strengths into conditional probability tables $P(Y\mid X)$. Measure calibration with Expected Calibration Error:</p>
+          <div class="eqn">$$ \text{ECE}=\sum_{b=1}^{B}\frac{|B_b|}{N}\,\big|\,\text{acc}(B_b)-\text{conf}(B_b)\,\big|. $$</div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Take a known fuzzy controller (e.g. for a control/classification task).</li>
+          <li>Derive a BN with matching structure; calibrate CPTs from data.</li>
+          <li>Compare decisions and calibration on held-out data.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–2</span><span class="pt"><b>Pick task</b> + implement fuzzy baseline.</span></div>
+          <div class="phase"><span class="pw">WK 3–5</span><span class="pt"><b>Compile to BN</b>; learn CPTs.</span></div>
+          <div class="phase"><span class="pw">WK 6–7</span><span class="pt"><b>Compare</b> calibration + accuracy.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>Fuzzy logic (Mamdani), Bayesian networks, calibration metrics.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>scikit-fuzzy, pgmpy.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>A tabular control/classification dataset with labels.</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p><b>Baselines:</b> raw fuzzy controller. <b>Metrics:</b> ECE, Brier score, reliability diagrams, decision agreement.</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>A principled bridge from fuzzy rules to calibrated probabilistic inference, with quantified calibration gains.</p></div>
+      </div>
+
+      <div class="plan" id="plan-10">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>Exact inference cost in a Bayes net is dominated by the variable-elimination order; finding the optimal order is NP-hard, so heuristics (min-fill, min-degree) are used. Can RL learn better orders?</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>Variable elimination runs in time $O\!\big(n\cdot d^{\,w+1}\big)$, where $w$ is the <b>induced width</b> of the ordering and $d$ the domain size. The cost of eliminating order $\pi$ equals the sum of factor sizes created:</p>
+          <div class="eqn">$$ \text{cost}(\pi)=\sum_{k} \prod_{v\in\text{scope}(\psi_k)} |dom(v)|. $$</div>
+          <p>State = current moralized/triangulated graph; action = next variable to eliminate; reward $=-\log\text{cost}$ increment.</p>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Represent the elimination process as a sequential decision problem over the graph.</li>
+          <li>Train a policy (GNN + REINFORCE or DQN) to pick elimination order.</li>
+          <li>Compare induced width / total cost vs min-fill, min-degree.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–2</span><span class="pt"><b>VE engine</b> + heuristic-order baselines.</span></div>
+          <div class="phase"><span class="pw">WK 3–6</span><span class="pt"><b>Train policy</b> with cost-based reward.</span></div>
+          <div class="phase"><span class="pw">WK 7–8</span><span class="pt"><b>Benchmark</b> on standard networks.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>Variable elimination, treewidth, policy-gradient RL.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>pgmpy, PyTorch Geometric.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>bnlearn / UAI network repositories.</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p><b>Baselines:</b> min-fill, min-degree, weighted-min-fill. <b>Metrics:</b> induced width, total operations, wall-clock — all exact.</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>Learned orderings that reduce exact-inference cost on benchmark nets; the metric is exact so any improvement is unambiguous.</p></div>
+      </div>
+
+      <div class="plan" id="plan-11">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>Feature selection often ignores the theoretically optimal feature set. The Markov blanket of a target is exactly the minimal set that renders the target independent of everything else — but it's underused as a practical selector.</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>The Markov blanket $MB(T)$ = parents, children, and children's other parents of $T$. It satisfies</p>
+          <div class="eqn">$$ T \perp\!\!\!\perp X \mid MB(T)\qquad \forall\, X\notin MB(T)\cup\{T\}. $$<span class="ex">Given $MB(T)$, no other variable adds predictive information about $T$ — it is the optimal feature set.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Learn $MB(T)$ via algorithms like IAMB/HITON (conditional-independence tests).</li>
+          <li>Train classifiers on the blanket features.</li>
+          <li>Compare to LASSO and mutual-information selection.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–2</span><span class="pt"><b>Implement/wrap</b> MB discovery (IAMB).</span></div>
+          <div class="phase"><span class="pw">WK 3–4</span><span class="pt"><b>Run selectors</b> on several datasets.</span></div>
+          <div class="phase"><span class="pw">WK 5–6</span><span class="pt"><b>Benchmark</b> accuracy + stability.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>Conditional independence, BN structure learning.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>pgmpy / bnlearn, scikit-learn.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>UCI high-dimensional tabular datasets.</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p><b>Baselines:</b> LASSO, mutual info, all-features. <b>Metrics:</b> AUC/accuracy vs #features, selection stability (Jaccard across folds).</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>Empirical evidence on when MB selection matches/beats standard methods, grounded in its optimality theorem.</p></div>
+      </div>
+
+      <div class="plan" id="plan-12">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>Gibbs sampling needs convergence diagnostics, but practitioners pick one almost arbitrarily. A reproducible comparison on networks with known posteriors is missing.</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>Gibbs sampling draws each variable from its full conditional $x_i^{(t+1)}\sim P(x_i\mid x_{-i}^{(t)})$, leaving the joint stationary. The Gelman–Rubin statistic compares between-chain ($B$) and within-chain ($W$) variance:</p>
+          <div class="eqn">$$ \hat R=\sqrt{\frac{\frac{n-1}{n}W+\frac{1}{n}B}{W}}\ \xrightarrow{\text{converged}}\ 1. $$</div>
+          <p>Also track effective sample size $\text{ESS}=\dfrac{n}{1+2\sum_k \rho_k}$.</p>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Choose discrete BNs where exact posteriors are computable.</li>
+          <li>Run multiple Gibbs chains; record several diagnostics over time.</li>
+          <li>Correlate "diagnostic says converged" with actual distance to true posterior (TV / KL).</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–2</span><span class="pt"><b>Sampler + exact posteriors.</b></span></div>
+          <div class="phase"><span class="pw">WK 3–4</span><span class="pt"><b>Instrument diagnostics</b> (R-hat, ESS, autocorr).</span></div>
+          <div class="phase"><span class="pw">WK 5–6</span><span class="pt"><b>Compare</b> diagnostic reliability vs ground truth.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>MCMC, Gibbs sampling, convergence diagnostics.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>Python, ArviZ, pgmpy.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>Small/medium discrete BNs with tractable exact inference.</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p>Diagnostic "false convergence" rate, detection delay, TV distance at declared convergence.</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>A practical guide to which diagnostics are trustworthy for discrete BN inference — robust because the truth is computable.</p></div>
+      </div>
+
+      <div class="plan" id="plan-13">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>Exact inference is fast on low-treewidth nets and infeasible on high-treewidth ones; MCMC is the reverse. A system that switches automatically by estimating treewidth is rarely built end-to-end.</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>Exact VE is feasible when induced width $w$ is small ($O(d^{w+1})$). Estimate $\hat w$ cheaply (min-degree triangulation upper bound). Switch rule:</p>
+          <div class="eqn">$$ \text{use VE if } \hat w \le \tau,\quad \text{else MCMC},\quad \tau \text{ chosen to bound } O(d^{\hat w+1}). $$</div>
+          <p>Approximation error judged by $\lVert P-\hat P\rVert_{1}$ on queries with known answers.</p>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Build a router: triangulate, estimate $\hat w$, dispatch to VE or Gibbs.</li>
+          <li>Calibrate threshold $\tau$ on a validation set.</li>
+          <li>Compare accuracy-per-second to pure VE and pure MCMC.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–3</span><span class="pt"><b>Implement</b> both engines + width estimator.</span></div>
+          <div class="phase"><span class="pw">WK 4–5</span><span class="pt"><b>Tune</b> switch threshold.</span></div>
+          <div class="phase"><span class="pw">WK 6–7</span><span class="pt"><b>Benchmark</b> on mixed-width nets.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>VE, treewidth/triangulation, MCMC.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>pgmpy, NetworkX.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>UAI inference benchmark networks (varied width).</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p><b>Baselines:</b> always-VE, always-MCMC. <b>Metrics:</b> error at fixed time budget, % queries answered exactly.</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>An adaptive inference engine that dominates either pure strategy on a width-diverse benchmark.</p></div>
+      </div>
+
+      <div class="plan" id="plan-14">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>CDCL SAT solvers depend heavily on variable branching order. A learned ordering could help — but only if the solver remains complete and correct. Use a GNN to warm-start ordering without touching soundness.</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>A CNF $\Phi=\bigwedge_j C_j$ becomes a bipartite variable–clause graph. A GNN produces embeddings via message passing</p>
+          <div class="eqn">$$ h_v^{(k+1)}=\sigma\!\Big(W\,h_v^{(k)}+\textstyle\sum_{c\ni v} U\,h_c^{(k)}\Big), $$</div>
+          <p>then predicts an initial branching score per variable, seeding the solver's VSIDS. Because branching order never affects the soundness/completeness of CDCL, correctness is preserved by construction.</p>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Train a GNN to predict "good" branching variables (from solver traces or unsat cores).</li>
+          <li>Inject predicted scores as VSIDS initialization.</li>
+          <li>Measure solver runtime/conflicts vs default init.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–3</span><span class="pt"><b>Trace collection</b> + graph encoding.</span></div>
+          <div class="phase"><span class="pw">WK 4–6</span><span class="pt"><b>Train GNN</b>; hook into a solver (e.g. MiniSat/PySAT).</span></div>
+          <div class="phase"><span class="pw">WK 7–8</span><span class="pt"><b>Benchmark</b> on SATLIB.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>DPLL/CDCL, VSIDS, GNNs.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>PySAT, PyTorch Geometric.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>SATLIB / SAT Competition instances.</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p><b>Baselines:</b> default VSIDS, random init. <b>Metrics:</b> runtime, #conflicts, #decisions (correctness held constant).</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>A neuro-symbolic warm-start that speeds solving while remaining provably sound — the soundness claim is free.</p></div>
+      </div>
+
+      <div class="plan" id="plan-15">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>CSP solvers backtrack heavily when variable/value/propagation order is poor. Learning a propagation/ordering policy could cut backtracks while keeping completeness.</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>Arc consistency (AC-3) prunes domains until $\forall (x_i,x_j)\in\text{arcs}:\ \forall a\in D_i,\ \exists b\in D_j$ satisfying the constraint. Backtracking search interleaves with propagation; the classic baseline is the Minimum-Remaining-Values heuristic</p>
+          <div class="eqn">$$ x^\star=\arg\min_{x_i\ \text{unassigned}} |D_i|. $$</div>
+          <p>Learn to predict the order minimizing total backtracks (a count, exactly measurable).</p>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Featurize CSP state (domain sizes, constraint degrees).</li>
+          <li>Train a policy to choose variable/value order; keep AC-3 propagation.</li>
+          <li>Compare backtrack counts to MRV + degree heuristics.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–2</span><span class="pt"><b>CSP solver</b> with AC-3 + MRV baseline.</span></div>
+          <div class="phase"><span class="pw">WK 3–5</span><span class="pt"><b>Learn ordering</b> policy (imitation or RL).</span></div>
+          <div class="phase"><span class="pw">WK 6–7</span><span class="pt"><b>Benchmark</b> on CSP suites.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>CSPs, arc consistency, ordering heuristics.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>python-constraint / OR-Tools, scikit-learn.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>Standard CSP benchmarks (graph coloring, n-queens, scheduling).</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p><b>Baselines:</b> MRV, degree, random. <b>Metrics:</b> backtrack count, nodes, time (completeness preserved).</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>Reduced backtracking from a learned policy, with backtrack count as exact, solver-internal evidence.</p></div>
+      </div>
+
+      <div class="plan" id="plan-16">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>Naïve Bayes assumes feature independence, which is usually false, producing over-confident (miscalibrated) probabilities even when classification accuracy is fine. How bad is the miscalibration, and can a cheap post-hoc fix recover it?</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>NB scores $P(y\mid x)\propto P(y)\prod_i P(x_i\mid y)$. When features are correlated, the product over-counts evidence. Apply temperature scaling to the log-scores $z$:</p>
+          <div class="eqn">$$ \hat P(y\mid x)=\operatorname{softmax}\!\left(\frac{z}{T}\right),\quad T \text{ fit by minimizing NLL on validation.}$$</div>
+          <p>Quantify with ECE (see #9) and Brier score $\frac{1}{N}\sum (\hat p_i-y_i)^2$.</p>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Train NB on datasets spanning low→high feature correlation.</li>
+          <li>Measure calibration; relate it to a correlation metric.</li>
+          <li>Fit temperature/Platt scaling; re-measure.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–2</span><span class="pt"><b>NB + calibration</b> measurement pipeline.</span></div>
+          <div class="phase"><span class="pw">WK 3–4</span><span class="pt"><b>Correlate</b> miscalibration with dependence strength.</span></div>
+          <div class="phase"><span class="pw">WK 5–6</span><span class="pt"><b>Recalibrate</b> + report recovery.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>Naïve Bayes, calibration, temperature/Platt scaling.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>scikit-learn.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>UCI datasets + synthetic correlated features.</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p><b>Baselines:</b> raw NB. <b>Metrics:</b> ECE, Brier, NLL before/after; accuracy unchanged.</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>A characterization of NB miscalibration vs feature dependence plus a cheap, effective fix — low-risk and immediately useful.</p></div>
+      </div>
+
+      <div class="plan" id="plan-17">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>Bayes-net inference returns a posterior but rarely explains <i>why</i>. A method that finds the minimal evidence subset responsible for a query's posterior shift would aid trust and debugging.</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>Given query $Q$ and evidence $e$, define the relevance of an evidence subset $S\subseteq e$ by the divergence it removes:</p>
+          <div class="eqn">$$ \text{rel}(S)=D_{\mathrm{KL}}\!\big(P(Q\mid e)\ \Vert\ P(Q\mid e\setminus S)\big). $$</div>
+          <p>Seek the smallest $S$ with $\text{rel}(e\setminus S)$ below a threshold — a minimal sufficient explanation.</p>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Compute posteriors with/without evidence subsets.</li>
+          <li>Greedy/branch-and-bound search for the minimal explanatory set.</li>
+          <li>Validate explanations on networks with known structure.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–2</span><span class="pt"><b>Define metric</b> + exact-inference backend.</span></div>
+          <div class="phase"><span class="pw">WK 3–5</span><span class="pt"><b>Search algorithm</b> for minimal sets.</span></div>
+          <div class="phase"><span class="pw">WK 6–7</span><span class="pt"><b>User-style validation</b> on benchmark nets.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>BN inference, KL divergence, combinatorial search.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>pgmpy.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>Classic nets (Asia, Alarm) with interpretable semantics.</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p>Explanation size vs fidelity trade-off; agreement with ground-truth causal paths in known nets.</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>A quantifiable explanation method for probabilistic inference — metrics make the contribution concrete.</p></div>
+      </div>
+
+      <div class="plan" id="plan-18">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>RNNs dominate sequence modeling, but in low-data regimes simple HMMs may win. Where exactly is the crossover? A controlled study fills this in.</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>An HMM defines $P(x_{1:T})=\sum_{z_{1:T}}\prod_t P(z_t\mid z_{t-1})P(x_t\mid z_t)$, computed by the forward recursion</p>
+          <div class="eqn">$$ \alpha_t(j)=P(x_t\mid z_t{=}j)\sum_i \alpha_{t-1}(i)\,A_{ij}. $$</div>
+          <p>Compare against a small RNN as a function of training-set size $N$; locate the $N^\star$ where test performance crosses.</p>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Pick sequence-labeling tasks; subsample to vary $N$.</li>
+          <li>Train HMM (Baum-Welch) and a small RNN at each $N$.</li>
+          <li>Plot test metric vs $N$; identify crossover.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–2</span><span class="pt"><b>Implement both models</b> + task pipeline.</span></div>
+          <div class="phase"><span class="pw">WK 3–4</span><span class="pt"><b>Sweep</b> data sizes, many seeds.</span></div>
+          <div class="phase"><span class="pw">WK 5–6</span><span class="pt"><b>Analyze</b> crossover + variance.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>HMMs (forward-backward, Baum-Welch), RNN basics.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>hmmlearn, PyTorch.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>POS tagging / activity recognition sequences.</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p>Test accuracy/F1 vs $N$ with confidence bands; crossover point $N^\star$ per task.</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>A practical data-regime map for model choice — outcome-robust, since the deliverable is the map itself.</p></div>
+      </div>
+
+      <div class="plan" id="plan-19">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>Kalman filters are optimal only for linear-Gaussian systems; real dynamics are non-linear. Augmenting a KF with a learned residual could capture what the linear model misses while keeping the filter's structure.</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>Standard KF: predict $\hat x_{k}^{-}=F\hat x_{k-1}+Bu_k$, $P_k^{-}=FP_{k-1}F^\top+Q$; update with gain $K_k=P_k^{-}H^\top(HP_k^{-}H^\top+R)^{-1}$ and</p>
+          <div class="eqn">$$ \hat x_k=\hat x_k^{-}+K_k\big(z_k-H\hat x_k^{-}\big). $$</div>
+          <p>Add a neural residual to the dynamics: $x_k=Fx_{k-1}+Bu_k+g_\theta(x_{k-1},u_k)$, learning $g_\theta$ to model non-linearity (EKF-style Jacobians for propagation).</p>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Simulate non-linear tracking systems (ground truth known).</li>
+          <li>Implement KF/EKF baselines; add learned residual.</li>
+          <li>Compare RMSE under varying non-linearity.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–2</span><span class="pt"><b>Simulator</b> + KF/EKF baselines.</span></div>
+          <div class="phase"><span class="pw">WK 3–5</span><span class="pt"><b>Add + train</b> residual model.</span></div>
+          <div class="phase"><span class="pw">WK 6–7</span><span class="pt"><b>Benchmark</b> RMSE vs non-linearity level.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>Kalman/extended Kalman filtering, basic NNs.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>filterpy, PyTorch, NumPy.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>Simulated trajectories (pendulum, bearings-only tracking).</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p><b>Baselines:</b> KF, EKF, UKF. <b>Metrics:</b> position/velocity RMSE, NEES consistency (ground truth from simulation).</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>A hybrid filter that improves tracking under non-linearity, verified against simulated ground truth.</p></div>
+      </div>
+
+      <div class="plan" id="plan-20">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>Dynamic Bayesian Networks usually assume fixed structure; real streams drift. Combine online DBN structure learning with drift detection so the model adapts when the world changes.</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>A DBN factorizes $P(X_t\mid X_{t-1})=\prod_i P(X_t^i\mid \text{Pa}(X_t^i))$. Score candidate structures with BIC:</p>
+          <div class="eqn">$$ \text{BIC}=\log P(D\mid \hat\theta,G)-\frac{\dim(G)}{2}\log N. $$</div>
+          <p>Detect drift on the data stream (e.g. ADWIN / CUSUM on log-likelihood) and trigger restructuring when a change point fires.</p>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Online score-based structure search over a sliding window.</li>
+          <li>Monitor likelihood with a drift detector; re-learn on alarms.</li>
+          <li>Evaluate on synthetic streams with planted change points.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–3</span><span class="pt"><b>DBN learner</b> + windowing.</span></div>
+          <div class="phase"><span class="pw">WK 4–5</span><span class="pt"><b>Integrate drift detector.</b></span></div>
+          <div class="phase"><span class="pw">WK 6–8</span><span class="pt"><b>Test</b> on planted-drift datasets.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>DBNs, BIC/structure learning, concept-drift detection.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>pgmpy, river (online ML).</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>Synthetic streams with known change points.</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p>Detection delay, structural Hamming distance to true graph over time, predictive log-likelihood.</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>An adaptive DBN that recovers structure after drift, measured against known change points.</p></div>
+      </div>
+
+      <div class="plan" id="plan-21">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>EM for Gaussian mixtures converges only to a local optimum; the result depends heavily on initialization, yet the "geography" of initialization basins is rarely mapped, and a cheap smart-init isn't standard.</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>EM maximizes the expected complete-data log-likelihood. E-step responsibilities:</p>
+          <div class="eqn">$$ \gamma_{ik}=\frac{\pi_k\,\mathcal{N}(x_i\mid\mu_k,\Sigma_k)}{\sum_j \pi_j\,\mathcal{N}(x_i\mid\mu_j,\Sigma_j)}. $$</div>
+          <p>M-step updates $\mu_k=\frac{\sum_i\gamma_{ik}x_i}{\sum_i\gamma_{ik}}$, etc. The data log-likelihood $\ell=\sum_i\log\sum_k\pi_k\mathcal{N}(\cdot)$ is exact ground truth for comparing initializations.</p>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Run EM from many random inits; cluster the resulting optima.</li>
+          <li>Map which init regions lead to which optimum (basins).</li>
+          <li>Propose + test a cheap smart init (k-means++ seeding, etc.).</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–2</span><span class="pt"><b>EM + GMM</b> implementation, logging $\ell$.</span></div>
+          <div class="phase"><span class="pw">WK 3–4</span><span class="pt"><b>Basin mapping</b> via many restarts.</span></div>
+          <div class="phase"><span class="pw">WK 5–6</span><span class="pt"><b>Smart-init</b> proposal + test.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>EM, Gaussian mixtures, optimization landscapes.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>scikit-learn, NumPy, matplotlib.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>Synthetic GMMs (known truth) + a few real datasets.</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p>Final log-likelihood distribution, % reaching global optimum, restarts saved by smart init.</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>A reproducible basin map + an init heuristic with measured benefit — a classic, fully verifiable study.</p></div>
+      </div>
+
+      <div class="plan" id="plan-22">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>Decision trees split purely for accuracy, which can amplify bias against protected groups. Bake fairness directly into the splitting criterion and chart the trade-off.</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>Standard split uses information gain $IG(S,A)=H(S)-\sum_v\frac{|S_v|}{|S|}H(S_v)$ with entropy $H(S)=-\sum_c p_c\log p_c$. Add a fairness penalty (e.g. demographic-parity gap) to form</p>
+          <div class="eqn">$$ \text{score}(A)=IG(S,A)-\lambda\,\big|\,P(\hat y{=}1\mid g{=}0)-P(\hat y{=}1\mid g{=}1)\,\big|. $$</div>
+          <p>Sweeping $\lambda$ traces the accuracy–fairness Pareto front.</p>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Modify a tree learner's split selection with the penalized score.</li>
+          <li>Sweep $\lambda$; record accuracy + fairness metrics.</li>
+          <li>Compare to post-hoc fairness methods.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–2</span><span class="pt"><b>Tree + standard metrics.</b></span></div>
+          <div class="phase"><span class="pw">WK 3–4</span><span class="pt"><b>Penalized splitting</b> + $\lambda$ sweep.</span></div>
+          <div class="phase"><span class="pw">WK 5–6</span><span class="pt"><b>Pareto analysis</b> vs baselines.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>Decision trees, fairness metrics (DP, equal opportunity).</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>scikit-learn (custom criterion) or from-scratch tree, fairlearn.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>Adult / COMPAS / German Credit.</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p><b>Baselines:</b> vanilla tree, post-processing fairness. <b>Metrics:</b> accuracy vs demographic-parity / equalized-odds gaps (Pareto front).</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>An interpretable in-processing fairness method with a measured accuracy–fairness trade-off curve.</p></div>
+      </div>
+
+      <div class="plan" id="plan-23">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>Theoretical regret bounds for RL are well known, but students rarely check them empirically. On small MDPs you can compute the optimal policy exactly and verify whether bounds hold and which method is more sample-efficient.</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>Q-learning update: $Q(s,a)\leftarrow Q(s,a)+\alpha\big[r+\gamma\max_{a'}Q(s',a')-Q(s,a)\big]$. Cumulative regret against the optimal value $V^\star$:</p>
+          <div class="eqn">$$ R_T=\sum_{t=1}^{T}\big(V^\star(s_t)-V^{\pi_t}(s_t)\big), $$</div>
+          <p>compared to theory like $\tilde{O}(\sqrt{H\,S\,A\,T})$ for optimistic methods ($H$ horizon, $S,A$ state/action counts).</p>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Build small MDPs; compute $V^\star$ by value iteration.</li>
+          <li>Run tabular Q-learning and a model-based learner.</li>
+          <li>Plot empirical regret vs the theoretical curve.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–2</span><span class="pt"><b>MDP suite</b> + exact solver.</span></div>
+          <div class="phase"><span class="pw">WK 3–4</span><span class="pt"><b>Implement</b> both learners.</span></div>
+          <div class="phase"><span class="pw">WK 5–6</span><span class="pt"><b>Regret analysis</b> vs bounds.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>MDPs, value iteration, Q-learning, regret notion.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>Python, NumPy, Gymnasium (custom small envs).</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>Self-built small MDPs (chains, gridworlds).</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p>Empirical vs theoretical regret slope; sample complexity to reach $\epsilon$-optimal policy.</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>An empirical validation of regret behavior with everything checked against computable ground truth — maximally defensible.</p></div>
+      </div>
+
+      <div class="plan" id="plan-24">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>Reward shaping speeds RL but arbitrary shaping can change the optimal policy. Potential-based shaping is provably safe — can we <b>learn the potential from demonstrations</b> while keeping that guarantee?</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>Potential-based shaping adds $F(s,a,s')=\gamma\Phi(s')-\Phi(s)$ to the reward. Ng, Harada & Russell (1999) proved this leaves the optimal policy <b>unchanged</b> for any potential $\Phi$:</p>
+          <div class="eqn">$$ Q^\star_{R+F}(s,a)=Q^\star_{R}(s,a)-\Phi(s). $$<span class="ex">The optimal action ranking is preserved exactly — this is the bulletproof core.</span></div>
+          <p>Learn $\Phi_\theta$ from demonstrations (e.g. as a value-function estimate), then shape with the guaranteed-safe form.</p>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Collect demonstrations; fit $\Phi_\theta$ (regress toward returns).</li>
+          <li>Train RL with potential-based shaping using $\Phi_\theta$.</li>
+          <li>Verify policy invariance empirically + measure speedup.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–2</span><span class="pt"><b>RL baseline</b> (no shaping) on a sparse-reward task.</span></div>
+          <div class="phase"><span class="pw">WK 3–4</span><span class="pt"><b>Learn $\Phi$</b> from demos; apply shaping.</span></div>
+          <div class="phase"><span class="pw">WK 5–6</span><span class="pt"><b>Measure</b> convergence speedup + invariance.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>RL, reward shaping, the potential-based shaping theorem.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>Gymnasium, Stable-Baselines3 / PyTorch.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>Demonstrations on sparse-reward envs (MiniGrid, mountain car).</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p><b>Baselines:</b> no shaping, naive (unsafe) shaping. <b>Metrics:</b> steps to convergence, final return, confirmed policy invariance.</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>Faster learning with a <b>provable</b> guarantee that the optimal policy is unchanged — the strongest "bulletproof" candidate of the set.</p></div>
+      </div>
+
+      <div class="plan" id="plan-25">
+        <div class="plan-sec"><h4><span class="ix">①</span>The gap</h4><p>Trained RNN policies are black boxes; verifying their behavior is hard. Extracting an equivalent finite automaton makes the policy inspectable and formally checkable.</p></div>
+        <div class="plan-sec"><h4><span class="ix">②</span>Mathematical foundation</h4>
+          <p>Treat the RNN as an oracle over input sequences and extract a DFA $M=(Q,\Sigma,\delta,q_0,F)$ via state-merging or Angluin's $L^*$ active learning. Quality is the <b>fidelity</b> — agreement on sampled sequences:</p>
+          <div class="eqn">$$ \text{fid}=\Pr_{x\sim \mathcal{D}}\big[\,M(x)=\text{RNN}(x)\,\big]. $$</div>
+          <p>On the extracted DFA, verify safety/liveness properties by model checking (reachability over $Q$).</p>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">③</span>Method</h4><ol>
+          <li>Train an RNN controller on a task with symbolic inputs.</li>
+          <li>Extract a DFA (state clustering of hidden states or $L^*$).</li>
+          <li>Measure fidelity; verify properties on the DFA.</li>
+        </ol></div>
+        <div class="plan-sec"><h4><span class="ix">④</span>Plan of action</h4>
+          <div class="phase"><span class="pw">WK 1–3</span><span class="pt"><b>Train RNN</b> on a regular-language / control task.</span></div>
+          <div class="phase"><span class="pw">WK 4–6</span><span class="pt"><b>Extraction</b> algorithm + fidelity test.</span></div>
+          <div class="phase"><span class="pw">WK 7–8</span><span class="pt"><b>Verify</b> properties on the automaton.</span></div>
+        </div>
+        <div class="plan-sec"><h4><span class="ix">⑤</span>Requisites</h4><div class="reqgrid">
+          <div class="reqbox"><div class="rl">Background</div><span>RNNs, automata theory, $L^*$ / state merging, model checking basics.</span></div>
+          <div class="reqbox"><div class="rl">Tools</div><span>PyTorch, automata libs, a model checker (e.g. NuSMV) or custom reachability.</span></div>
+          <div class="reqbox"><div class="rl">Data</div><span>Regular-language tasks / grid control with symbolic observations.</span></div>
+        </div></div>
+        <div class="plan-sec"><h4><span class="ix">⑥</span>Evaluation</h4><p>Extraction fidelity, automaton size, # properties verified, counterexamples found.</p></div>
+        <div class="plan-sec"><h4><span class="ix">⑦</span>What you can claim</h4><p>A neuro-symbolic pipeline that makes RNN policies verifiable, with fidelity quantifying how faithful the abstraction is.</p></div>
+      </div>
+
+    </div>
+    </section>
+
+  <footer>
+    Study companion · curriculum links open NPTEL / MIT OCW / Stanford lectures · tick topics ✓ to track progress (saved automatically)<br>
+    Research cards are starting points — validate novelty against current literature before you build.
+  </footer>
+</main>
+
+<script>
+const yt = q => "https://www.youtube.com/results?search_query=" + encodeURIComponent(q);
+const PL = id => "https://www.youtube.com/playlist?list=" + id;
+
+const HUBS = [
+  {src:"NPTEL · IIT Madras",t:"AI: Search Methods for Problem Solving",d:"Prof. Deepak Khemani. Definitive on uninformed/informed search, local search, GAs, game playing.",c:"var(--nptel)",u:PL("PLEAYkSg4uSQ1FaQoCxoFvmMFnBsHTBokj")},
+  {src:"NPTEL · IIT Madras",t:"AI: Knowledge Representation & Reasoning",d:"Prof. Deepak Khemani. Logic, inference, planning — the companion to the search course.",c:"var(--nptel)",u:PL("PLyqSpQzTE6M-t-Qr2Z0Gf_KP5RC97uOKC")},
+  {src:"MIT OpenCourseWare",t:"6.034 Artificial Intelligence",d:"Prof. Patrick Winston. Search, constraints, learning, neural nets, GAs, probabilistic inference.",c:"var(--mit)",u:PL("PLUl4u3cNGP63gFHB6xb-kVBiQHYe_4hSi")},
+  {src:"Stanford",t:"CS221: AI — Principles & Techniques",d:"Search, A*, MDPs, RL, CSPs, Bayes nets, Gibbs sampling, EM, logic. The single best topic match.",c:"var(--stanford)",u:PL("PLoROMvodv4rO1NB9TD4iUZ3qghGEGtqNX")},
+  {src:"Stanford",t:"CS228: Probabilistic Graphical Models",d:"Ermon group. Bayes nets, conditional independence, variable elimination, MCMC — free notes.",c:"var(--stanford)",u:"https://ermongroup.github.io/cs228/"},
+  {src:"MIT OpenCourseWare",t:"6.034 — Full course page",d:"Lecture videos, problem-solving sessions, exams & assignments to work the algorithms by hand.",c:"var(--mit)",u:"https://ocw.mit.edu/courses/6-034-artificial-intelligence-fall-2010/"},
+];
+
+const DATA = [
+  { id:"u1", color:"var(--lime)", title:"Search, Optimization & Game Playing",
+    blurb:"How agents explore state spaces to reach goals — and why some problems blow up.",
+    topics:[
+      {code:"1.1",t:"Principles of Search",subs:["state space","agents","basic search idea"],
+        res:[{l:"AI: Search Methods (Khemani)",s:"full playlist",p:"nptel",u:PL("PLEAYkSg4uSQ1FaQoCxoFvmMFnBsHTBokj")},{l:"CS221 — search overview",s:"lecture",p:"stanford",u:PL("PLoROMvodv4rO1NB9TD4iUZ3qghGEGtqNX")}]},
+      {code:"1.2",t:"Complexity, Combinatorial Explosion & NP-Completeness",subs:["NP-complete","polynomial hierarchy","intractability"],
+        res:[{l:"NP-completeness explained",s:"search",p:"yt",u:yt("NP completeness combinatorial explosion explained")},{l:"Polynomial hierarchy",s:"search",p:"yt",u:yt("polynomial hierarchy complexity theory lecture")}]},
+      {code:"1.3",t:"Uninformed Search",subs:["DFS","BFS","uniform-cost","depth-limited","iterative deepening"],
+        res:[{l:"Uninformed search (Khemani)",s:"playlist",p:"nptel",u:PL("PLEAYkSg4uSQ1FaQoCxoFvmMFnBsHTBokj")},{l:"BFS/DFS/IDDFS",s:"search",p:"yt",u:yt("uninformed search BFS DFS iterative deepening uniform cost")}]},
+      {code:"1.4",t:"Informed (Heuristic) Search",subs:["best-first","A*","heuristics","admissibility"],
+        res:[{l:"6.034 — Optimal search & A*",s:"lecture",p:"mit",u:PL("PLUl4u3cNGP63gFHB6xb-kVBiQHYe_4hSi")},{l:"A* search explained",s:"search",p:"yt",u:yt("A star search algorithm heuristics admissible")}]},
+      {code:"1.5",t:"Local Search & the Local-Extrema Problem",subs:["hill climbing","local maxima","simulated annealing"],
+        res:[{l:"6.034 — Hill climbing & beam",s:"lecture",p:"mit",u:PL("PLUl4u3cNGP63gFHB6xb-kVBiQHYe_4hSi")},{l:"Simulated annealing",s:"search",p:"yt",u:yt("simulated annealing hill climbing local optima")}]},
+      {code:"1.6",t:"Genetic Algorithms",subs:["selection","crossover","mutation","fitness"],
+        res:[{l:"6.034 — Genetic Algorithms (L13)",s:"lecture",p:"mit",u:PL("PLUl4u3cNGP63gFHB6xb-kVBiQHYe_4hSi")},{l:"Genetic algorithms tutorial",s:"search",p:"yt",u:yt("genetic algorithm tutorial crossover mutation")}]},
+      {code:"1.7",t:"Game Playing (Adversarial Search)",subs:["minimax","alpha-beta","two-player games"],
+        res:[{l:"AI: Search Methods — games",s:"playlist",p:"nptel",u:PL("PLEAYkSg4uSQ1FaQoCxoFvmMFnBsHTBokj")},{l:"Minimax & alpha-beta pruning",s:"search",p:"yt",u:yt("minimax alpha beta pruning game playing AI")}]},
+    ]},
+
+  { id:"u2", color:"var(--blue)", title:"Knowledge, Logic & Reasoning under Uncertainty",
+    blurb:"Representing what an agent knows and reasoning with incomplete, uncertain information.",
+    topics:[
+      {code:"2.1",t:"Knowledge Bases & Inference",subs:["KB","entailment","inference"],
+        res:[{l:"AI: KR & Reasoning (Khemani)",s:"full playlist",p:"nptel",u:PL("PLyqSpQzTE6M-t-Qr2Z0Gf_KP5RC97uOKC")},{l:"6.034 — rule-based systems",s:"lecture",p:"mit",u:PL("PLUl4u3cNGP63gFHB6xb-kVBiQHYe_4hSi")}]},
+      {code:"2.2",t:"Constraint Satisfaction Problems",subs:["variables","domains","constraints","propagation"],
+        res:[{l:"CS221 — CSPs",s:"lecture",p:"stanford",u:PL("PLoROMvodv4rO1NB9TD4iUZ3qghGEGtqNX")},{l:"6.034 — constraints",s:"lecture",p:"mit",u:PL("PLUl4u3cNGP63gFHB6xb-kVBiQHYe_4hSi")}]},
+      {code:"2.3",t:"Agents that Reason Logically · Knowledge-Based Agents",subs:["KB agents","representation"],
+        res:[{l:"KR & Reasoning (Khemani)",s:"playlist",p:"nptel",u:PL("PLyqSpQzTE6M-t-Qr2Z0Gf_KP5RC97uOKC")},{l:"Logical agents",s:"search",p:"yt",u:yt("knowledge based agents logical reasoning AI")}]},
+      {code:"2.4",t:"Propositional (Boolean) Logic",subs:["syntax","semantics","inference","resolution"],
+        res:[{l:"CS221 — logic",s:"lecture",p:"stanford",u:PL("PLoROMvodv4rO1NB9TD4iUZ3qghGEGtqNX")},{l:"Propositional logic inference",s:"search",p:"yt",u:yt("propositional logic inference syntax semantics resolution")}]},
+      {code:"2.5",t:"Fuzzy Logic",subs:["fuzzy sets","membership","fuzzy inference"],
+        res:[{l:"Fuzzy logic — full lecture",s:"search",p:"yt",u:yt("fuzzy logic fuzzy sets inference tutorial NPTEL")},{l:"Fuzzy systems",s:"search",p:"yt",u:yt("fuzzy logic control system explained")}]},
+      {code:"2.6",t:"Uncertainty: Probability, Conditional Independence, Markov Blanket",subs:["conditional independence","Markov blanket"],
+        res:[{l:"CS228 — independence & PGMs",s:"notes",p:"stanford",u:"https://ermongroup.github.io/cs228/"},{l:"Markov blanket explained",s:"search",p:"yt",u:yt("conditional independence Markov blanket bayesian network")}]},
+      {code:"2.7",t:"Bayes Nets · Exact Inference",subs:["enumeration","variable elimination"],
+        res:[{l:"6.034 — Probabilistic Inference",s:"lecture",p:"mit",u:PL("PLUl4u3cNGP63gFHB6xb-kVBiQHYe_4hSi")},{l:"Variable elimination",s:"search",p:"yt",u:yt("bayes net variable elimination enumeration inference")}]},
+      {code:"2.8",t:"Approximate Inference · MCMC · Gibbs Sampling",subs:["stochastic simulation","MCMC","Gibbs"],
+        res:[{l:"CS221 — Gibbs sampling",s:"lecture",p:"stanford",u:PL("PLoROMvodv4rO1NB9TD4iUZ3qghGEGtqNX")},{l:"CS228 — sampling methods",s:"notes",p:"stanford",u:"https://ermongroup.github.io/cs228/"}]},
+    ]},
+
+  { id:"u3", color:"var(--magenta)", title:"Temporal Models, Planning & Learning",
+    blurb:"Reasoning over time, making plans, and learning from data & experience.",
+    topics:[
+      {code:"3.1",t:"Temporal Models · Hidden Markov Models",subs:["temporal reasoning","HMM","forward-backward"],
+        res:[{l:"HMM — full lecture",s:"search",p:"yt",u:yt("hidden markov model forward backward viterbi lecture")},{l:"CS228 — temporal models",s:"notes",p:"stanford",u:"https://ermongroup.github.io/cs228/"}]},
+      {code:"3.2",t:"Kalman Filters & Dynamic Bayesian Networks",subs:["Kalman filter","DBN"],
+        res:[{l:"Kalman filter explained",s:"search",p:"yt",u:yt("kalman filter explained intuition tutorial")},{l:"Dynamic Bayesian Networks",s:"search",p:"yt",u:yt("dynamic bayesian network DBN tutorial")}]},
+      {code:"3.3",t:"Automata Theory",subs:["DFA/NFA","languages","state machines"],
+        res:[{l:"Automata theory course",s:"search",p:"yt",u:yt("automata theory finite automata NPTEL full course")},{l:"Theory of computation",s:"search",p:"yt",u:yt("theory of computation automata explained")}]},
+      {code:"3.4",t:"Planning · Goals & Representations",subs:["situation space","plan space","STRIPS"],
+        res:[{l:"KR & Reasoning — planning",s:"playlist",p:"nptel",u:PL("PLyqSpQzTE6M-t-Qr2Z0Gf_KP5RC97uOKC")},{l:"AI planning STRIPS",s:"search",p:"yt",u:yt("AI planning situation space plan space STRIPS")}]},
+      {code:"3.5",t:"Inductive Learning & Concept Formation",subs:["induction","hypothesis space","learning from examples"],
+        res:[{l:"6.034 — learning overview",s:"lecture",p:"mit",u:PL("PLUl4u3cNGP63gFHB6xb-kVBiQHYe_4hSi")},{l:"Inductive learning",s:"search",p:"yt",u:yt("inductive learning concept formation machine learning")}]},
+      {code:"3.6",t:"Decision Tree Learning",subs:["ID3","information gain","entropy"],
+        res:[{l:"6.034 — Identification Trees",s:"lecture",p:"mit",u:PL("PLUl4u3cNGP63gFHB6xb-kVBiQHYe_4hSi")},{l:"Decision trees & entropy",s:"search",p:"yt",u:yt("decision tree learning ID3 information gain entropy")}]},
+      {code:"3.7",t:"Neural Networks",subs:["perceptron","backprop","gradient descent"],
+        res:[{l:"6.034 — Neural Nets & Backprop",s:"lecture",p:"mit",u:PL("PLUl4u3cNGP63gFHB6xb-kVBiQHYe_4hSi")},{l:"CS221 — neural networks",s:"lecture",p:"stanford",u:PL("PLoROMvodv4rO1NB9TD4iUZ3qghGEGtqNX")}]},
+      {code:"3.8",t:"Probability-Based Learning · Naïve Bayes · EM",subs:["probabilistic models","Naïve Bayes","EM algorithm"],
+        res:[{l:"CS221 — EM algorithm",s:"lecture",p:"stanford",u:PL("PLoROMvodv4rO1NB9TD4iUZ3qghGEGtqNX")},{l:"Naïve Bayes & EM",s:"search",p:"yt",u:yt("naive bayes EM algorithm expectation maximization tutorial")}]},
+      {code:"3.9",t:"Reinforcement Learning",subs:["MDPs","Q-learning","policy","reward"],
+        res:[{l:"CS221 — RL & MDPs",s:"lecture",p:"stanford",u:PL("PLoROMvodv4rO1NB9TD4iUZ3qghGEGtqNX")},{l:"David Silver RL course",s:"search",p:"yt",u:yt("David Silver reinforcement learning course lectures")}]},
+    ]},
+];
+
+const RESEARCH = [
+  // SEARCH & OPTIMIZATION
+  {n:1,g:"search",area:"Informed Search",t:"Learned-but-admissible heuristics for A*",
+    body:"Train a graph neural network to predict node-to-goal cost, then clamp every prediction to an admissible envelope (≥ a cheap base heuristic, ≤ true cost estimate) so A* stays optimal.",
+    why:"Optimality is preserved by construction; evaluate node-expansion reduction on standard pathfinding/puzzle benchmarks."},
+  {n:2,g:"search",area:"Simulated Annealing",t:"Bandit-controlled restart & cooling schedules",
+    body:"Frame cooling-rate and restart decisions as a multi-armed bandit that adapts online to the instance being solved, on TSP / MAX-SAT.",
+    why:"Clean baseline (fixed geometric schedule); improvement is directly measurable as solution quality at fixed budget."},
+  {n:3,g:"search",area:"Genetic Algorithms",t:"Memetic GA with an RL operator-selection policy",
+    body:"Let a small RL agent choose which crossover/mutation/local-search operator to apply each generation, learning per-problem operator value.",
+    why:"Ablation-friendly: compare against random and fixed operator schedules with identical evaluation budgets."},
+  {n:4,g:"search",area:"Complexity",t:"Mapping the memory–optimality frontier",
+    body:"Empirically chart exactly where iterative-deepening A* beats A* under tight memory limits across problem families (grids, puzzles, planning).",
+    why:"Purely empirical and reproducible; the deliverable is a characterization, not a risky 'beat SOTA' claim."},
+  {n:5,g:"search",area:"NP-Hardness",t:"Per-instance solver routing for NP-hard problems",
+    body:"Extract cheap instance features, predict which solver/heuristic will be fastest, and route accordingly (algorithm selection in a new domain).",
+    why:"Builds on the well-validated SATzilla paradigm; success is measured as wall-clock speedup over any single solver."},
+  {n:6,g:"search",area:"Heuristics",t:"An empirical law: heuristic error vs node expansions",
+    body:"Systematically perturb a perfect heuristic by controlled error and measure A* expansions, fitting a relationship with confidence intervals.",
+    why:"Ground truth is computable on small domains; result is a defensible empirical curve regardless of its exact shape."},
+  {n:7,g:"search",area:"Anytime Search",t:"Deadline-aware weight adaptation in weighted A*",
+    body:"Adapt the heuristic weight online based on remaining time budget to optimize the solution-quality-vs-time profile.",
+    why:"Anytime profiles give a full curve to compare against fixed-weight baselines — hard to get a null result."},
+  {n:8,g:"search",area:"Local Optima",t:"Unified benchmark: annealing vs tabu vs basin-hopping",
+    body:"Build one reproducible test harness and compare escape-from-local-optima methods with proper statistical significance testing.",
+    why:"A rigorous comparative study is publishable on methodology alone; low execution risk."},
+
+  // REASONING & UNCERTAINTY
+  {n:9,g:"reason",area:"Fuzzy Logic",t:"Compiling fuzzy rule bases into calibrated Bayes nets",
+    body:"Translate a fuzzy controller's rules into a Bayesian network and compare predictive calibration and interpretability on the same task.",
+    why:"Calibration (ECE, reliability diagrams) is a concrete, well-defined metric for the comparison."},
+  {n:10,g:"reason",area:"Variable Elimination",t:"RL-learned elimination orderings",
+    body:"Learn an elimination order for exact inference using a treewidth-based reward, comparing to min-fill / min-degree heuristics.",
+    why:"Treewidth/operation-count is exact ground truth — improvement or parity is unambiguous on benchmark BNs."},
+  {n:11,g:"reason",area:"Markov Blanket",t:"Markov-blanket feature selection for tabular ML",
+    body:"Use BN structure learning to extract each target's Markov blanket as a feature set; benchmark against LASSO and mutual-information selection.",
+    why:"Standard datasets + standard classifiers; the Markov blanket has clean theoretical justification as the optimal feature set."},
+  {n:12,g:"reason",area:"MCMC",t:"A reproducible benchmark of Gibbs convergence diagnostics",
+    body:"Compare Gelman–Rubin, effective sample size, and autocorrelation diagnostics for Gibbs sampling on discrete BNs with known posteriors.",
+    why:"Known posteriors give ground truth; methodological contributions are robust to outcome."},
+  {n:13,g:"reason",area:"Inference",t:"Adaptive exact/approximate inference switching",
+    body:"Estimate treewidth on the fly and switch between variable elimination and MCMC to minimize error at a fixed time budget.",
+    why:"Engineering + evaluation against both pure baselines; measurable accuracy-per-second."},
+  {n:14,g:"reason",area:"Propositional Logic",t:"GNN-warm-started variable ordering for SAT solvers",
+    body:"Predict a good branching order with a graph neural network to seed a CDCL solver, keeping the solver complete and correct.",
+    why:"Correctness is untouched (only ordering changes); runtime on SATLIB is the clean metric."},
+  {n:15,g:"reason",area:"CSP",t:"Learning propagation order to cut backtracks",
+    body:"Predict the most constraint-reducing propagation/variable order in CSPs to minimize backtracking on standard suites.",
+    why:"Backtrack count is an exact, solver-internal measure; comparison to MRV/degree heuristics is direct."},
+  {n:16,g:"reason",area:"Naïve Bayes",t:"Recalibrating Naïve Bayes under broken independence",
+    body:"Quantify miscalibration when independence is violated, then apply a simple post-hoc fix (temperature / isotonic) and measure recovery.",
+    why:"Low-risk, immediately useful; calibration metrics are standard and the baseline is the raw classifier."},
+  {n:17,g:"reason",area:"Bayes Nets",t:"Minimal 'why' explanations for BN inference",
+    body:"Generate the smallest set of variables that explains a query's posterior shift, defining a relevance metric and testing on benchmark nets.",
+    why:"Explanation size and fidelity are quantifiable; aligns with growing explainability demand."},
+
+  // TEMPORAL, PLANNING, LEARNING, RL
+  {n:18,g:"learn",area:"HMMs",t:"When do HMMs beat RNNs? The low-data regime",
+    body:"Controlled study identifying the data/sequence-length regime where classical HMMs outperform small RNNs on sequence labeling.",
+    why:"Practically valuable and outcome-robust — the result is a regime map, not a winner-takes-all claim."},
+  {n:19,g:"learn",area:"Kalman Filters",t:"Kalman filter with a learned non-linear residual",
+    body:"Augment an (extended) Kalman filter with a neural network that models the residual the linear model misses, for tracking under non-linearity.",
+    why:"Simulated tracking gives perfect ground truth; compare RMSE against EKF/UKF baselines."},
+  {n:20,g:"learn",area:"Dynamic BNs",t:"Online DBN structure learning with drift detection",
+    body:"Learn DBN structure from streaming data while a change-point detector flags concept drift and triggers re-learning.",
+    why:"Synthetic drift datasets provide known change points; detection delay and structural accuracy are measurable."},
+  {n:21,g:"learn",area:"EM Algorithm",t:"Initialization basins for EM on Gaussian mixtures",
+    body:"Map how initialization determines which local optimum EM reaches, then propose a cheap smart-init heuristic and test it.",
+    why:"A classic, fully reproducible setup; log-likelihood at convergence is exact ground truth."},
+  {n:22,g:"learn",area:"Decision Trees",t:"Fairness-aware splitting criteria",
+    body:"Modify information gain to penalize splits that increase a chosen disparity metric; chart the accuracy–fairness trade-off.",
+    why:"Both accuracy and fairness metrics are standard; the deliverable is a Pareto curve, robust to outcome."},
+  {n:23,g:"learn",area:"Reinforcement Learning",t:"Tabular vs model-based RL: empirical regret on small MDPs",
+    body:"Compare Q-learning and a simple model-based learner on small MDPs and check whether empirical regret matches theoretical bounds.",
+    why:"Small MDPs have computable optimal policies — every claim is verifiable against ground truth."},
+  {n:24,g:"learn",area:"Reinforcement Learning",t:"Demonstration-learned potential-based reward shaping",
+    body:"Learn a shaping potential from demonstrations using potential-based shaping, which provably leaves the optimal policy unchanged.",
+    why:"Ng's potential-based shaping theorem guarantees policy invariance — a genuinely 'bulletproof' safety property to build on."},
+  {n:25,g:"learn",area:"Automata + Neural",t:"Extracting verifiable automata from RNN policies",
+    body:"Distill a trained RNN controller into an approximating DFA, then formally verify behavioral properties on the extracted automaton.",
+    why:"Neuro-symbolic and measurable: automaton–RNN agreement gives a fidelity score, and the DFA is checkable."},
+];
+
+const APPLY = {
+  1:{problem:`Guaranteed-shortest-path routing on large game / robotics grid maps, where you must return a provably optimal path fast.`,
+     datasets:[{name:"MovingAI Pathfinding Benchmarks",url:"https://www.movingai.com/benchmarks/"},{name:"Korf 15-puzzle instances",url:"https://www.movingai.com/benchmarks/stp/index.html"}],
+     fit:`The maps ship with <b>provably optimal path costs</b>, giving exact h* labels for training and a clean optimality check. Branching factor is small enough to train a GNN, and the optimality guarantee is exactly what navigation needs.`},
+  2:{problem:`Minimizing tour length for vehicle routing / PCB drilling (TSP) and solving MAX-SAT — instances of wildly varying difficulty.`,
+     datasets:[{name:"TSPLIB",url:"http://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/"},{name:"SATLIB Benchmark Problems",url:"https://www.cs.ubc.ca/~hoos/SATLIB/benchm.html"}],
+     fit:`Instances span very different energy landscapes, so a single fixed cooling schedule is suboptimal — <b>per-instance adaptation is exactly where bandits pay off</b>. Best-known costs are published for clean scoring.`},
+  3:{problem:`0/1 knapsack and job-shop scheduling — rugged combinatorial problems where the best operator changes as search progresses.`,
+     datasets:[{name:"OR-Library (Beasley)",url:"http://people.brunel.ac.uk/~mastjjb/jeb/orlib/"}],
+     fit:`Different crossover / mutation / local-search operators help at different phases of a rugged landscape — the precise situation a learned <b>operator-selection policy</b> targets. OR-Library gives many instances plus best-known values.`},
+  4:{problem:`Deciding which search algorithm to use under a memory cap, across pathfinding and classical planning.`,
+     datasets:[{name:"MovingAI Benchmarks",url:"https://www.movingai.com/benchmarks/"},{name:"AI-Planning classical domains",url:"https://github.com/AI-Planning/classical-domains"}],
+     fit:`These domains deliberately span a wide range of <b>branching factor and depth</b> — exactly the axes the memory–optimality frontier is mapped over.`},
+  5:{problem:`Choosing the fastest SAT / CSP solver per instance — a real deployment concern for solver portfolios.`,
+     datasets:[{name:"ASlib (algorithm-selection library)",url:"https://github.com/coseal/aslib_data"},{name:"ASlib spec",url:"https://www.aslib.net/"}],
+     fit:`ASlib was <b>built for exactly this task</b>: pre-computed per-instance runtimes for many solvers across domains, so you can train and evaluate selection immediately against a defined oracle and single-best baseline.`},
+  6:{problem:`Quantifying how search effort scales with heuristic quality on sliding-tile puzzles.`,
+     datasets:[{name:"8-/15-puzzle (generated)",url:"https://www.movingai.com/benchmarks/stp/index.html"}],
+     fit:`On the 8-puzzle, <b>h* is exactly computable</b> by retrograde analysis, so you can inject controlled heuristic error and measure expansions against ground truth — the cleanest possible setup for an empirical law.`},
+  7:{problem:`Real-time game pathfinding where a route must be returned before a frame deadline.`,
+     datasets:[{name:"MovingAI game maps (Dragon Age, StarCraft)",url:"https://www.movingai.com/benchmarks/grids.html"}],
+     fit:`Real game maps come with <b>known optimal costs</b>, so you can score an anytime route's quality at each deadline — and games are the canonical place deadlines bite.`},
+  8:{problem:`Black-box continuous optimization — comparing escape-from-local-optima methods fairly.`,
+     datasets:[{name:"COCO / BBOB suite",url:"https://github.com/numbbo/coco"}],
+     fit:`Every BBOB function has a <b>known global optimum</b>, enabling exact success/gap measurement and proper statistical comparison — the harness is purpose-built for benchmarking optimizers.`},
+  9:{problem:`Clinical risk scoring or appliance control where experts have if-then rules but you need calibrated probabilities.`,
+     datasets:[{name:"UCI Heart Disease",url:"https://archive.ics.uci.edu/dataset/45/heart+disease"},{name:"Pima Diabetes (OpenML)",url:"https://www.openml.org/d/37"}],
+     fit:`These domains have <b>natural fuzzy rules</b> (risk thresholds) plus labeled outcomes, so you can compile rules to a BN and measure calibration (ECE / Brier) against real labels.`},
+  10:{problem:`Speeding up exact inference inside diagnostic / expert-system Bayesian networks.`,
+     datasets:[{name:"bnlearn Bayesian Network Repository",url:"https://www.bnlearn.com/bnrepository/"}],
+     fit:`Standard nets (Alarm, Hailfinder, Munin) have a <b>measurable exact-inference cost</b> (operations / induced width), so a learned elimination order is judged against an unambiguous metric.`},
+  11:{problem:`Selecting informative biomarkers / features from high-dimensional tabular and gene-expression data.`,
+     datasets:[{name:"NIPS'03 FS Challenge — Madelon",url:"https://archive.ics.uci.edu/dataset/171/madelon"},{name:"OpenML feature-selection suites",url:"https://www.openml.org/"}],
+     fit:`These benchmarks are <b>engineered with many irrelevant / redundant features</b> — precisely where the Markov blanket's optimality property (minimal sufficient feature set) should beat filter methods.`},
+  12:{problem:`Making trustworthy "has it converged?" decisions for Bayes-net posterior estimation.`,
+     datasets:[{name:"bnlearn repo — Asia, Alarm",url:"https://www.bnlearn.com/bnrepository/"}],
+     fit:`These nets are small enough that the <b>exact posterior is computable</b>, giving ground truth to test whether each diagnostic's "converged" verdict is actually true.`},
+  13:{problem:`A general BN inference engine that must handle networks of very different treewidth.`,
+     datasets:[{name:"bnlearn repo (varied width)",url:"https://www.bnlearn.com/bnrepository/"},{name:"UAI Inference Competition nets",url:"https://www.bnlearn.com/bnrepository/"}],
+     fit:`The collection spans <b>low-to-high treewidth</b> networks — the exact axis the exact/approximate switching logic keys on — so you can show the router dominates either pure strategy.`},
+  14:{problem:`Cutting the runtime of an industrial CDCL SAT solver.`,
+     datasets:[{name:"SATLIB Benchmark Problems",url:"https://www.cs.ubc.ca/~hoos/SATLIB/benchm.html"}],
+     fit:`Large CNFs have rich <b>variable–clause graph structure</b> a GNN can exploit; runtime / conflicts are clean metrics and branching order cannot break soundness, so correctness is free.`},
+  15:{problem:`Solving scheduling, graph coloring and timetabling with fewer backtracks.`,
+     datasets:[{name:"CSPLib",url:"https://www.csplib.org/"},{name:"DIMACS graph-coloring",url:"https://mat.tepper.cmu.edu/COLOR/instances.html"}],
+     fit:`CSPLib provides standard CSP instances, and <b>backtrack count is an exact solver-internal metric</b> — a learned propagation order's benefit is directly measurable against MRV / degree.`},
+  16:{problem:`Spam / text and tabular classification where the predicted probability feeds a downstream decision.`,
+     datasets:[{name:"UCI Spambase",url:"https://archive.ics.uci.edu/dataset/94/spambase"},{name:"20 Newsgroups (scikit-learn)",url:"https://scikit-learn.org/stable/datasets/real_world.html#newsgroups-dataset"}],
+     fit:`Text features are <b>strongly correlated</b>, so the Naïve-Bayes independence assumption is badly violated — exactly the regime that produces over-confident, miscalibrated scores to study and fix.`},
+  17:{problem:`Explaining why a medical Bayes net reached a particular diagnosis.`,
+     datasets:[{name:"bnlearn repo — Asia & Alarm",url:"https://www.bnlearn.com/bnrepository/"}],
+     fit:`These are <b>small, interpretable nets with known causal structure</b>, so you can check that a minimal "why" explanation lines up with the true influencing variables.`},
+  18:{problem:`Part-of-speech tagging and human-activity recognition when labeled data is scarce.`,
+     datasets:[{name:"Universal Dependencies (POS)",url:"https://universaldependencies.org/"},{name:"UCI Human Activity Recognition",url:"https://archive.ics.uci.edu/dataset/240/human+activity+recognition+using+smartphones"}],
+     fit:`Both are <b>sequence-labeling tasks you can subsample</b> to build genuine low-data regimes — the setting where a compact HMM may beat a data-hungry RNN.`},
+  19:{problem:`Tracking objects / vehicles and fusing sensors under nonlinear motion.`,
+     datasets:[{name:"Simulated trajectories (filterpy)",url:"https://filterpy.readthedocs.io/"},{name:"KITTI Tracking",url:"https://www.cvlibs.net/datasets/kitti/eval_tracking.php"}],
+     fit:`Simulation gives <b>exact ground-truth state</b> for RMSE / NEES checks, while KITTI is a real nonlinear tracking testbed — the residual model targets exactly the nonlinearity a plain Kalman filter misses.`},
+  20:{problem:`Monitoring sensor / network data streams whose behavior changes over time (concept drift).`,
+     datasets:[{name:"UCI Gas Sensor Array Drift",url:"https://archive.ics.uci.edu/dataset/224/gas+sensor+array+drift+dataset+at+different+concentrations"},{name:"Electricity (Elec2) — OpenML",url:"https://www.openml.org/d/151"}],
+     fit:`These are <b>canonical concept-drift datasets with real, documented drift</b>, so an online DBN learner plus change-point detector has genuine structure changes to track and detect.`},
+  21:{problem:`Clustering for customer segmentation or image color quantization via Gaussian mixtures.`,
+     datasets:[{name:"Synthetic GMMs (sklearn)",url:"https://scikit-learn.org/stable/modules/mixture.html"},{name:"UCI Iris",url:"https://archive.ics.uci.edu/dataset/53/iris"}],
+     fit:`Data log-likelihood is <b>exact ground truth</b> for comparing initializations, and synthetic GMMs let you know the true components — perfect for mapping which init reaches which optimum.`},
+  22:{problem:`Credit approval and recidivism risk scoring, where disparate impact on protected groups matters.`,
+     datasets:[{name:"UCI Adult / Census Income",url:"https://archive.ics.uci.edu/dataset/2/adult"},{name:"ProPublica COMPAS",url:"https://github.com/propublica/compas-analysis"},{name:"UCI German Credit",url:"https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data"}],
+     fit:`These are the <b>standard fairness benchmarks</b> — they include protected attributes and documented bias, so a fairness-aware splitting criterion has a real accuracy–fairness trade-off to chart.`},
+  23:{problem:`Inventory control and gridworld navigation as small, fully-known decision processes.`,
+     datasets:[{name:"Self-built MDPs via Gymnasium",url:"https://gymnasium.farama.org/"}],
+     fit:`Small MDPs are <b>solvable exactly by value iteration</b>, so the optimal value V* is known and every empirical regret claim is checkable against ground truth.`},
+  24:{problem:`Sparse-reward navigation / manipulation that plain RL fails to solve without guidance.`,
+     datasets:[{name:"MiniGrid (Farama)",url:"https://minigrid.farama.org/"},{name:"Minari offline datasets / demos",url:"https://minari.farama.org/"}],
+     fit:`MiniGrid is the canonical <b>sparse-reward</b> testbed where shaping is needed, demos are easy to collect, and potential-based shaping guarantees the optimal policy is unchanged — a safe speedup.`},
+  25:{problem:`Verifying that a learned sequence classifier / controller behaves correctly on a regular language.`,
+     datasets:[{name:"Tomita grammars (lstar_extraction)",url:"https://github.com/tech-srl/lstar_extraction"},{name:"Balanced-parens / protocol tasks",url:"https://github.com/tech-srl/lstar_extraction"}],
+     fit:`Tomita grammars have a <b>known ground-truth DFA</b>, so extraction fidelity is exactly measurable and verified properties can be checked against the true language.`},
+};
+
+let progress = {};
+async function loadProgress(){
+  try{ const r = await window.storage.get('ai-course-progress'); if(r&&r.value) progress = JSON.parse(r.value); }
+  catch(e){ try{ progress = JSON.parse(localStorage.getItem('aicp')||'{}'); }catch(_){ progress={}; } }
+}
+async function saveProgress(){
+  try{ await window.storage.set('ai-course-progress', JSON.stringify(progress)); }
+  catch(e){ try{ localStorage.setItem('aicp', JSON.stringify(progress)); }catch(_){} }
+}
+
+const TOTAL = DATA.reduce((a,u)=>a+u.topics.length,0);
+const check = `<svg viewBox="0 0 24 24" fill="none" stroke="#080b12" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>`;
+const rColors = {search:"var(--lime)",reason:"var(--blue)",learn:"var(--magenta)"};
+
+function renderHubs(){
+  document.getElementById('hubs').innerHTML = HUBS.map(h=>`
+    <a class="hub" style="--hc:${h.c}" href="${h.u}" target="_blank" rel="noopener">
+      <span class="arr">↗</span>
+      <div class="src">${h.src}</div>
+      <div class="ht">${h.t}</div>
+      <div class="hd">${h.d}</div>
+    </a>`).join('');
+}
+
+function renderUnits(){
+  document.getElementById('units').innerHTML = DATA.map(u=>`
+    <section class="unit" id="${u.id}" style="--u-c:${u.color}">
+      <div class="unit-head">
+        <div class="unit-num">${u.id.slice(1)}</div>
+        <div class="unit-meta"><h2>${u.title}</h2><p>${u.blurb}</p><span class="count">${u.topics.length} TOPICS</span></div>
+      </div>
+      <div class="grid">
+        ${u.topics.map(t=>{
+          const key=u.id+"-"+t.code, done=progress[key]?"done":"";
+          return `<article class="card ${done}" data-unit="${u.id}" data-key="${key}" data-text="${(t.t+' '+t.subs.join(' ')).toLowerCase()}">
+            <div class="card-top">
+              <div><span class="code">${t.code}</span><div class="topic">${t.t}</div></div>
+              <div class="check" onclick="toggle('${key}')">${check}</div>
+            </div>
+            <ul class="subs">${t.subs.map(s=>`<li>${s}</li>`).join('')}</ul>
+            <div class="res">${t.res.map(r=>`<a href="${r.u}" target="_blank" rel="noopener">
+              <span class="pill ${r.p}">${r.p}</span>
+              <span class="label">${r.l}<small>${r.s}</small></span><span class="arr">↗</span></a>`).join('')}</div>
+          </article>`;
+        }).join('')}
+      </div>
+    </section>`).join('');
+  updateBar();
+}
+
+function renderResearch(){
+  document.getElementById('research').innerHTML = RESEARCH.map(r=>`
+    <article class="ridea" data-rg="${r.g}" style="--rc:${rColors[r.g]}" onclick="openPlan(${r.n})">
+      <div class="rnum">${r.n}</div>
+      <div class="rarea">${r.area}</div>
+      <div class="rtitle">${r.t}</div>
+      <div class="ridea-body">${r.body}</div>
+      <div class="rwhy"><b>WHY IT HOLDS UP · </b>${r.why}</div>
+      <button class="planbtn">Read full research plan →</button>
+    </article>`).join('');
+}
+
+function openPlan(n){
+  const r = RESEARCH.find(x=>x.n===n);
+  const src = document.getElementById('plan-'+n);
+  if(!src) return;
+  document.getElementById('m-area').textContent = "#"+n+" · "+r.area;
+  document.getElementById('m-title').textContent = r.t;
+  document.getElementById('modal').style.setProperty('--mc', rColors[r.g]);
+  const body = document.getElementById('m-body');
+  const ap = APPLY[n];
+  let apHTML = '';
+  if(ap){
+    apHTML = `<div class="apply"><div class="alab">◎ APPLICATION &amp; DATA — what to point this at</div>`
+      + `<h5>${ap.problem}</h5>`
+      + `<div class="ds">` + ap.datasets.map(d=>`<a class="dschip" href="${d.url}" target="_blank" rel="noopener">▸ ${d.name}</a>`).join('') + `</div>`
+      + `<div class="fit"><b>Why this algorithm fits this data:</b> ${ap.fit}</div></div>`;
+  }
+  currentPrompt = buildPrompt(n);
+  const promptHTML = `<div class="plan-sec promptwrap"><h4><span class="ix">\u2726</span>Mentor prompt — paste into any chatbot</h4>`
+    + `<p>Copy this into ChatGPT, Claude, Gemini or any LLM. It turns the chatbot into a stage-by-stage mentor for <b>this exact project</b> — it teaches the theory and math, walks you through the code on the real dataset, quizzes you, and ends with a mock viva so you finish actually understanding it.</p>`
+    + `<div class="promptbox"><button class="copybtn" onclick="copyPrompt()">Copy prompt</button><pre id="promptpre"></pre></div></div>`;
+  body.innerHTML = apHTML + src.innerHTML + promptHTML;
+  document.getElementById('overlay').classList.add('on');
+  document.body.style.overflow='hidden';
+  if(window.renderMathInElement){
+    renderMathInElement(body,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],throwOnError:false});
+  }
+  document.getElementById('promptpre').textContent = currentPrompt;
+}
+function closePlan(){
+  document.getElementById('overlay').classList.remove('on');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{ if(e.key==="Escape") closePlan(); });
+
+function toggle(key){
+  progress[key]=!progress[key]; saveProgress();
+  const c=document.querySelector(`[data-key="${key}"]`); c.classList.toggle('done',!!progress[key]);
+  updateBar(); applyFilter();
+}
+function updateBar(){
+  const done=Object.values(progress).filter(Boolean).length, pct=Math.round(done/TOTAL*100);
+  document.getElementById('barFill').style.width=pct+"%";
+  document.getElementById('pctNum').textContent=pct;
+  document.getElementById('pctCount').textContent=done+"/"+TOTAL;
+}
+
+let activeFilter="all";
+let currentPrompt="";
+const GROUPNAME={search:"Search & Optimization",reason:"Reasoning & Uncertainty",learn:"Temporal models, Planning & Learning"};
+
+function buildPrompt(n){
+  const r=RESEARCH.find(x=>x.n===n);
+  const ap=APPLY[n];
+  const ds = ap ? ap.datasets.map(d=>d.name).join("; ") : "the standard benchmark for this task";
+  const prob = ap ? ap.problem : "a suitable real-world task";
+  return (
+"You are my dedicated project mentor and pair-programming partner. I am a student doing a hands-on AI research project, and your job is to take me from zero to genuinely understanding and HAVING BUILT it myself \u2014 not to just hand me finished answers.\n\n"+
+"=== THE PROJECT ===\n"+
+"Title: \""+r.t+"\"\n"+
+"Field: "+r.area+" ("+GROUPNAME[r.g]+").\n"+
+"Core idea: "+r.body+"\n"+
+"Real application I will target: "+prob+"\n"+
+"Dataset(s) I will use: "+ds+".\n"+
+"Why it is a defensible project: "+r.why+"\n\n"+
+"=== HOW I WANT YOU TO TEACH ME ===\n"+
+"1. First, ask me 2-3 quick questions about my current level (math, Python, machine learning) and then adapt EVERYTHING to that level. Use analogies for hard ideas.\n"+
+"2. Teach in stages. Do NOT dump everything at once. After each stage, ask me 1-2 check questions and WAIT for my reply before continuing. The stages are:\n"+
+"   (a) Intuition \u2014 what problem we solve and why this method, in plain language.\n"+
+"   (b) The math \u2014 derive and explain every equation step by step, define every symbol, and walk through one tiny worked numerical example. Do not skip steps.\n"+
+"   (c) The method \u2014 the exact algorithm as numbered steps plus clean pseudocode.\n"+
+"   (d) The data \u2014 how to download, load and inspect the dataset(s) above, what the fields/instances mean, and how to set up the baseline to compare against.\n"+
+"   (e) Implementation \u2014 give me runnable, well-commented Python ONE block at a time, explain what each block does and why, and ask me to predict the output before I run it.\n"+
+"   (f) Experiments \u2014 the exact metrics, the baselines, and how to run a fair comparison; then help me read the numbers.\n"+
+"   (g) Interpretation and write-up \u2014 help me turn results into clear claims, the right plots, and a short report, and make me state the limitations honestly.\n"+
+"3. Be Socratic: when I am stuck, ask leading questions before revealing the answer. Quiz me at the end of each stage so I prove I understand.\n"+
+"4. Make me do the deciding: at every fork (hyperparameters, design choices) lay out the options, ask what I would choose and why, then react to my choice.\n"+
+"5. When I paste errors or strange results, debug WITH me \u2014 teach me to diagnose, do not just fix it.\n"+
+"6. At the very end, run a 'defend your project' mock viva: ask me 8-10 questions an examiner might ask, let me answer, then grade me and fill the gaps.\n\n"+
+"=== MY GOAL ===\n"+
+"By the end I should be able to explain the theory, justify every design choice, reproduce the code from understanding, interpret the results, and honestly state the limitations \u2014 so I genuinely feel I did this project myself.\n\n"+
+"Start now: greet me, restate this project in one short paragraph in your own words to confirm you have the scope right, then ask your calibration questions. Do not move past stage (a) until I answer."
+  );
+}
+
+function copyPrompt(){
+  const t=currentPrompt;
+  const flash=()=>{const b=document.querySelector('.copybtn');if(b){const o=b.textContent;b.textContent='\u2713 Copied!';setTimeout(()=>b.textContent=o,1600);}};
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(flash).catch(()=>fallbackCopy(t,flash));
+  } else { fallbackCopy(t,flash); }
+}
+function fallbackCopy(t,cb){
+  const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.top='-9999px';
+  document.body.appendChild(ta);ta.focus();ta.select();
+  try{document.execCommand('copy');cb&&cb();}catch(e){}
+  document.body.removeChild(ta);
+}
+function applyFilter(){
+  const q=document.getElementById('q').value.trim().toLowerCase(); let vis=0;
+  document.querySelectorAll('.card').forEach(c=>{
+    const u=c.dataset.unit,key=c.dataset.key,txt=c.dataset.text; let show=true;
+    if(["u1","u2","u3"].includes(activeFilter)) show=(u===activeFilter);
+    else if(activeFilter==="todo") show=!progress[key];
+    if(show&&q) show=txt.includes(q);
+    c.style.display=show?"":"none"; if(show)vis++;
+  });
+  document.querySelectorAll('.unit').forEach(s=>{
+    s.style.display=[...s.querySelectorAll('.card')].some(c=>c.style.display!=="none")?"":"none";
+  });
+  document.getElementById('empty').style.display=vis?"none":"block";
+}
+
+document.querySelectorAll('[data-f]').forEach(ch=>ch.addEventListener('click',()=>{
+  document.querySelectorAll('[data-f]').forEach(x=>x.classList.remove('active'));
+  ch.classList.add('active'); activeFilter=ch.dataset.f; applyFilter();
+}));
+document.getElementById('q').addEventListener('input',applyFilter);
+
+document.querySelectorAll('[data-rf]').forEach(ch=>ch.addEventListener('click',()=>{
+  document.querySelectorAll('[data-rf]').forEach(x=>x.classList.remove('active'));
+  ch.classList.add('active'); const f=ch.dataset.rf;
+  document.querySelectorAll('.ridea').forEach(r=>r.style.display=(f==="all"||r.dataset.rg===f)?"":"none");
+}));
+
+document.querySelectorAll('.vtab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.vtab').forEach(x=>x.classList.remove('active')); t.classList.add('active');
+  const v=t.dataset.view;
+  document.getElementById('view-curriculum').classList.toggle('on',v==="curriculum");
+  document.getElementById('view-research').classList.toggle('on',v==="research");
+  document.getElementById('curr-controls').style.display=(v==="curriculum")?"":"none";
+  window.scrollTo({top:0,behavior:'smooth'});
+}));
+
+(async()=>{ await loadProgress(); renderHubs(); renderUnits(); renderResearch();
+  // attempt to pre-render math in hidden plan sources once KaTeX loads
+  const tryRender=()=>{ if(window.renderMathInElement){
+    renderMathInElement(document.getElementById('plans'),{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],throwOnError:false});
+  } else { setTimeout(tryRender,200); } };
+  tryRender();
+})();
+</script>
